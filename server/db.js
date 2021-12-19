@@ -8,6 +8,6 @@ database:"express"
 
 db.connect()
 
-console.log(db)
+// console.log(db)
 
 module.exports = db;

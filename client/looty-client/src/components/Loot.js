@@ -6,9 +6,10 @@ const StyledDiv = styled.div`
     width: 25%;
     background-color: ${props => props.theme.darkerBrown};
     color: ${props => props.theme.lighterBrown};
-    border-style: dashed;
+    border-style: solid;
     border-color: ${props => props.theme.lightBrown};
     .topButtons {
+        padding: 0;
         display: flex;
         justify-content: flex-end;
     }
@@ -24,28 +25,28 @@ const StyledDiv = styled.div`
         margin: 1%;
     }
     #sellBtn {
-        width: 90%;
+        width: 50%;
         padding: 1%;
         margin: 1% auto;
     }
 `
 
-function Loot({ details, editLoot, deleteLoot, sellLoot }) {
+function Loot({ key, details, editLoot, deleteLoot, sellLoot }) {
     if (!details) {
         return <h3>Working fetching your loot...</h3>
     }
     return (
         <StyledDiv className='loot container'>
             <div className='topButtons'>
-                <button onclick={editLoot(details.id)} id='editBtn'>✏️</button>
-                <button onclick={deleteLoot(details.id)} id='deleteBtn'>❌</button>
+                <button onclick={editLoot(key)} id='editBtn'>✏️</button>
+                <button onclick={deleteLoot(key)} id='deleteBtn'>❌</button>
             </div>
             <div className='lootDetails'>
                 <p>Name: {details.name}</p>
                 <p>Value: {details.value}</p>
                 <p>Claimed by: {details.claimedBy || 'none'}</p>
             </div>
-            <button onclick={sellLoot(details.id)} id='sellBtn'>Sell Loot</button>
+            <button onclick={sellLoot(key)} id='sellBtn'>Sell Loot</button>
         </StyledDiv>
     )
 }

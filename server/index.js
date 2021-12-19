@@ -15,7 +15,7 @@ app.get("/api/unclaimed", (req,res) => {
 // console.log(req);
 // console.log("----------------------------------")
 sql_query="select * from loot_register where claimed_by='none' ";
-console.log(sql_query);
+console.log('unclaimed loot', sql_query);
 db.query(sql_query, (err,result) => {
         if(err) {
                 console.log(err)
@@ -26,7 +26,7 @@ res.send(result)
 // getting all loot
 app.get("/api/loot", (req, res) => {
     sql_query = "select * from loot_register";
-    console.log(sql_query);
+    console.log('get all loot', sql_query);
     db.query(sql_query, (err, result) => {
         if(err) {
             console.log(err);
@@ -38,13 +38,20 @@ app.get("/api/loot", (req, res) => {
 // post new loot
 app.post("/api/newLoot", (req, res) => {
     sql_query = `insert into loot_register (name, value ) values ('${req.body.name}', ${req.body.value})`;
-    console.log(sql_query);
+    console.log('post new loot', sql_query);
     db.query(sql_query, (err, result) => {
         if(err) {
             console.log(err);
         }
         res.send(result);
     });
+})
+
+// delete loot of id
+app.delete("/api/delete", (req, res) => {
+    sql_query = `delete from loot_register where id=${req.body}`;
+    console.log('req', req);
+    console.log('delete', sql_query);
 })
 
 // IMPORTANT!! DO NOT DELETE 

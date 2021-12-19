@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import Loot from './Loot';
 
@@ -19,6 +20,13 @@ export default function LootDisplay(props){
     }
     const deleteLoot = (lootId) => {
         // delete loot from lootBag
+        axios.delete('http://localhost:3002/api/delete', lootId)
+            .then(resp => {
+                console.log('delete', resp);
+            })
+            .catch(err => {
+                console.error(err);
+            })
         // push changes to db
     }
     const sellLoot = (lootId) => {
