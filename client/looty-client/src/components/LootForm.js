@@ -11,6 +11,36 @@ const StyledForm = styled.form`
     border-color: ${props => props.theme.darkerBrown};
     outline: 5px solid ${props => props.theme.lightBrown};
     color: ${props => props.theme.black};
+    h2 {
+        width: 100%;
+    }
+    .form-group {
+        width: 100%;
+    }
+    .errors {
+        color: ${props => props.theme.white};
+    }
+    .name {
+        width: 90%;
+        margin: 1% auto;
+    }
+    .name p {
+        display: inline;
+        margin-right: 1%;
+    }
+    .value {
+        width: 90%;
+        margin: 1% auto;
+    }
+    .value p {
+        display: inline;
+        margin-right: 1%;
+    }
+    #submitBtn {
+        width: 30%;
+        padding: 2%;
+        margin: 1% auto;
+    }
 `
 
 export default function LootForm(props) {
