@@ -6,6 +6,7 @@ const StyledDiv = styled.div`
     display: flex;
     width: 100%;
     flex-wrap: wrap;
+    justify-content: space-between;
     margin: 1% auto;
     padding: 1% 3%;
 `

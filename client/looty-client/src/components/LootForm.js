@@ -13,6 +13,7 @@ const StyledForm = styled.form`
     color: ${props => props.theme.black};
     h2 {
         width: 100%;
+        margin: 1% auto;
     }
     .form-group {
         width: 100%;
