@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as yup from 'yup';
+import schema from './validation/formSchema';
 import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header';
@@ -38,7 +40,11 @@ function App() {
   }
 
   const validate = (name, value) => {
-    // validate data
+      // validate data
+      yup.reach(schema, name)
+        .validate(value)
+        .then(() => setFormErrors({ ...formErrors, [name]: '' }))
+        .catch(err => setFormErrors({ ...formErrors, [name]: err.errors[0] }))
   }
 
   const inputChange = (name, value) => {
@@ -59,7 +65,8 @@ function App() {
 
   useEffect(() => {
       // this is where submit button magic happens
-  })
+      schema.isValid(formValues).then(valid => setDisabled(!valid));
+  }, [formValues]);
 
   return (
     <div className="App">
