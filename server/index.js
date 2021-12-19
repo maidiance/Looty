@@ -9,7 +9,6 @@ app.use(express.json())
 
 console.log("Depends loaded")
 
-
 // getting unclaimed loot
 app.get("/api/unclaimed", (req,res) => {
 // console.log("----------------------------------")
@@ -24,9 +23,20 @@ db.query(sql_query, (err,result) => {
 res.send(result)
 }); });
 
+// getting all loot
+app.get("api/loot", (req, res) => {
+    sql_query = "select * from loot_register";
+    console.log(sql_query);
+    db.query(sql_query, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        res.send(result);
+    });
+})
+
 // post new loot
 app.post("/api/newLoot", (req, res) => {
-    console.log(req);
     sql_query = `insert into loot_register (name, value ) values ('${req.body.name}', ${req.body.value})`;
     console.log(sql_query);
     db.query(sql_query, (err, result) => {

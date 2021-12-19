@@ -28,10 +28,21 @@ function App() {
   const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [disabled, setDisabled] = useState(initialDisabled);
 
+  const getLootBag = () => {
+    axios.get('http://localhost:3002/api/loot')
+      .then(resp => {
+        console.log('get', resp);
+      })
+      .catch(err => {
+        console.error(err);
+      })
+  }
+
   const postNewLoot = newLoot => {
     axios.post('http://localhost:3002/api/newLoot', newLoot)
       .then(resp => {
         console.log('post', resp);
+        setLootBag([newLoot, ...lootBag ]);
       })
       .catch(err => {
         console.err('error');
@@ -62,6 +73,10 @@ function App() {
     }
     postNewLoot(newLoot);
   }
+
+  useEffect(() => {
+      getLootBag();
+  }, [lootBag]);
 
   useEffect(() => {
       // this is where submit button magic happens
