@@ -5,7 +5,7 @@ const StyledDiv = styled.div`
     display: flex;
     width: 90%;
     flex-wrap: wrap;
-    margin: 2% 2%;
+    margin: 1% 2%;
     padding: 1% 3%;
     background-color: ${props => props.theme.darkerBrown};
     color: ${props => props.theme.lighterBrown};
@@ -20,9 +20,9 @@ function Loot({ details }) {
     return (
         <StyledDiv className='loot container'>
             <div className='lootDetails'>
-                <p>Name: </p> {details.name}
-                <p>Value: </p> {details.value}
-                <p>Claimed by: </p> {details.claimedBy}
+                <p>Name: {details.name}</p>
+                <p>Value: {details.value}</p>
+                <p>Claimed by: {details.claimedBy || 'none'}</p>
             </div>
         </StyledDiv>
     )

@@ -31,7 +31,8 @@ function App() {
   const getLootBag = () => {
     axios.get('http://localhost:3002/api/loot')
       .then(resp => {
-        console.log('get', resp);
+        // console.log('get', resp);
+        setLootBag(resp.data);
       })
       .catch(err => {
         console.error(err);
@@ -41,7 +42,7 @@ function App() {
   const postNewLoot = newLoot => {
     axios.post('http://localhost:3002/api/newLoot', newLoot)
       .then(resp => {
-        console.log('post', resp);
+        // console.log('post', resp);
         setLootBag([newLoot, ...lootBag ]);
       })
       .catch(err => {
@@ -75,12 +76,12 @@ function App() {
   }
 
   useEffect(() => {
-      getLootBag();
-  }, [lootBag]);
+    getLootBag();
+  }, []);
 
   useEffect(() => {
-      // this is where submit button magic happens
-      schema.isValid(formValues).then(valid => setDisabled(!valid));
+    // this is where submit button magic happens
+    schema.isValid(formValues).then(valid => setDisabled(!valid));
   }, [formValues]);
 
   return (
