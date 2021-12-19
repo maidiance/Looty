@@ -27,7 +27,7 @@ res.send(result)
 // post new loot
 app.post("/api/newLoot", (req, res) => {
     console.log(req);
-    sql_query = `insert into loot_register (name, value, count) values ('${req.body.name}', ${req.body.value}, ${req.body.count})`;
+    sql_query = `insert into loot_register (name, value ) values ('${req.body.name}', ${req.body.value})`;
     console.log(sql_query);
     db.query(sql_query, (err, result) => {
         if(err) {

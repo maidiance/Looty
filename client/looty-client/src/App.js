@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header';
 import LootForm from './components/LootForm';
-import Loot from './components/Loot';
+import LootDisplay from './components/LootDisplay';
 
 const initialFormValues = {
   name: '',
@@ -18,7 +18,7 @@ const initialFormErrors = {
 }
 
 const initialLoot = [];
-const initialDisabled = false;
+const initialDisabled = true;
 
 function App() {
   const [lootBag, setLootBag] = useState(initialLoot);
@@ -51,9 +51,8 @@ function App() {
 
   const formSubmit = () => {
     const newLoot = {
-      name: '+1 Teddy bear',
-      value: '2000',
-      count: 100, 
+      name: formValues.name.trim(),
+      value: formValues.value.trim(), 
     }
     postNewLoot(newLoot);
   }
@@ -72,13 +71,7 @@ function App() {
         disabled={disabled}
         errors={formErrors}
       />
-      {
-        lootBag.map(loot => {
-          return(
-            <Loot key={loot.id} details={loot} />
-          )
-        })
-      }
+      <LootDisplay lootBag={lootBag}/>
     </div>
   );
 }
