@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const StyledForm = styled.form`
     display: flex;
     flex-wrap: wrap;
-    margin: 2% 2%;
+    margin: 1% 2%;
     padding: 1% 3%;
     background-color: ${props=> props.theme.brown};
     border-style: double;

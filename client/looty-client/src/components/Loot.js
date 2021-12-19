@@ -2,16 +2,27 @@ import React from 'react';
 import styled from 'styled-components';
 
 const StyledDiv = styled.div`
-    display: flex;
+    margin: 1% auto;
     width: 25%;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 0 auto;
-    padding: 1% 2%;
     background-color: ${props => props.theme.darkerBrown};
     color: ${props => props.theme.lighterBrown};
     border-style: dashed;
     border-color: ${props => props.theme.lightBrown};
+    .topButtons {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .lootDetails {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 1% 2%;
+    }
+    .lootDetails p {
+        width: 100%;
+        margin: 1%;
+    }
     #sellBtn {
         width: 90%;
         padding: 1%;
