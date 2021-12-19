@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 const StyledDiv = styled.div`
     display: flex;
-    width: 90%;
+    width: 25%;
     flex-wrap: wrap;
-    margin: 1% 2%;
+    margin: 0 auto;
     padding: 1% 3%;
     background-color: ${props => props.theme.darkerBrown};
     color: ${props => props.theme.lighterBrown};

@@ -19,6 +19,7 @@ const StyledForm = styled.form`
     }
     .errors {
         color: ${props => props.theme.white};
+        margin: 1% auto;
     }
     .name {
         width: 90%;
