@@ -7,6 +7,8 @@ const  PORT = 3002;
 app.use(cors());
 app.use(express.json())
 
+console.log("Depends loaded")
+
 // Route to get all posts
 app.get("/api/get", (req,res)=>{
 db.query("SELECT * FROM posts", (err,result)=>{
@@ -18,8 +20,27 @@ res.send(result)
 
 // arbitrary DB access
 
+app.get("/api/unclaimed", (req,res) => {
+// console.log("----------------------------------")
+// console.log(req);
+// console.log("----------------------------------")
+sql_query="select * from loot_register where claimed_by='none' ";
+console.log(sql_query);
+db.query(sql_query, (err,result) => {
+        if(err) {
+                console.log(err)
+        }
+res.send(result)
+}); });
+
+
 app.get("/api/db", (req,res) => {
-sql_query = req.params.sql.replaceAll('-', ' ');
+console.log("----------------------------------")
+console.log(req);
+console.log("----------------------------------")
+console.log(typeof(req.query.sql),req.query.sql)
+sql_query = req.query.sql.replace(/-/g, ' ');
+console.log(sql_query)
 
 db.query(sql_query, (err,result) => {
 	if(err) {
@@ -76,5 +97,5 @@ console.log(err)
         } }) })
 
 app.listen(PORT, ()=>{
-    console.log()
+    console.log("Listening")
 })
