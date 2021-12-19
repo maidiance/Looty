@@ -24,7 +24,7 @@ res.send(result)
 }); });
 
 // getting all loot
-app.get("api/loot", (req, res) => {
+app.get("/api/loot", (req, res) => {
     sql_query = "select * from loot_register";
     console.log(sql_query);
     db.query(sql_query, (err, result) => {
