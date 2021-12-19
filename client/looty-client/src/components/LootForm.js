@@ -64,7 +64,7 @@ export default function LootForm(props) {
 
     return <StyledForm onSubmit={onSubmit}>
         <h2>Add Loot</h2>
-        <div classsName='errors'>
+        <div className='errors'>
             {/* errors here*/}
             <div>{errors.name}</div>
             <div>{errors.value}</div>
