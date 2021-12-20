@@ -27,13 +27,13 @@ export default function LootDisplay(props){
         props.setLootBag(updatedLoot);
 
         // push changes to db
-        // axios.post('http://localhost:3002/api/deleteLoot', lootElem)
-        //     .then(resp => {
-        //         console.log('delete', resp);
-        //     })
-        //     .catch(err => {
-        //         console.error(err);
-        //     })
+        axios.post('http://localhost:3002/api/deleteLoot', lootElem)
+            .then(resp => {
+                console.log('deleteQuery: ', resp);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
     const sellLoot = (lootId) => {
         // we will probably need playerId too

@@ -46,9 +46,14 @@ app.post("/api/newLoot", (req, res) => {
 
 // delete loot of id
 app.post("/api/deleteLoot", (req, res) => {
-    // sql_query = `delete from loot_register where id=${req.body}`;
-    console.log('req.body', req.body);
-    console.log('delete', sql_query);
+    sql_query = `delete from loot_register where id=${req.body.id}`;
+    console.log('delete query: ', sql_query);
+    db.query(sql_query, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        res.send(result);
+    })
 })
 
 // IMPORTANT!! DO NOT DELETE 
