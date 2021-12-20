@@ -14,14 +14,10 @@ const StyledDiv = styled.div`
 `
 
 export default function LootDisplay(props){
-    const editLoot = (lootId) => {
-        // allow user to make changes
-        // push changes to db
-    }
     const deleteLoot = (lootElem) => {
         // delete loot from lootBag
         const updatedLoot = props.lootBag.filter(item => {
-            // console.log('lootElem', lootElem);
+            // return loot that isn't the loot we're deleting
             return item.id !== lootElem.id;
         });
         props.setLootBag(updatedLoot);
@@ -29,7 +25,7 @@ export default function LootDisplay(props){
         // push changes to db
         axios.post('http://localhost:3002/api/deleteLoot', lootElem)
             .then(resp => {
-                console.log('deleteQuery: ', resp);
+                // console.log('delete: ', resp);
             })
             .catch(err => {
                 console.error(err);
@@ -50,7 +46,6 @@ export default function LootDisplay(props){
                     <Loot 
                         key={loot.id}
                         details={loot}
-                        editLoot={editLoot}
                         deleteLoot={deleteLoot}
                         sellLoot={sellLoot}
                     />

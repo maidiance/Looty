@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import * as yup from 'yup';
 import styled from 'styled-components';
+import schema from '../validation/formSchema';
 
 const StyledForm = styled.form`
     display: flex;
@@ -46,30 +49,66 @@ const StyledForm = styled.form`
 `
 
 export default function LootForm(props) {
-    const {
-        values,
-        submit,
-        change,
-        disabled,
-        errors,
-    } = props;
-
-    const onSubmit = evt => {
-        evt.preventDefault();
-        submit();
+    const initialFormValues = {
+        name: '',
+        value: '',
     }
+    const initialFormErrors = {
+        name: '',
+        value: '',
+    }
+    const [formValues, setFormValues] = useState(initialFormValues);
+    const [formErrors, setFormErrors] = useState(initialFormErrors);
+    const [disabled, setDisabled] = useState(true);
 
+    const validate = (name, value) => {
+        // validate data
+        yup.reach(schema, name)
+          .validate(value)
+          .then(() => setFormErrors({ ...formErrors, [name]: '' }))
+          .catch(err => setFormErrors({ ...formErrors, [name]: err.errors[0] }))
+    }
+  
     const onChange = evt => {
         const { name, value } = evt.target;
-        change(name, value);
+        validate(name, value);
+        setFormValues({
+            ...formValues,
+            [name]: value
+        })
     }
+  
+    const onSubmit = evt => {
+        evt.preventDefault();
+        const newLoot = {
+            name: formValues.name.trim(),
+            value: formValues.value.trim(), 
+        }
+        postNewLoot(newLoot);
+    }
+
+    const postNewLoot = newLoot => {
+        axios.post('http://localhost:3002/api/newLoot', newLoot)
+            .then(resp => {
+                props.setLootBag([newLoot, ...props.lootBag ]);
+            })
+            .catch(err => {
+                console.err('error');
+            })
+            .finally(() => setFormValues(initialFormValues))
+    }
+
+    useEffect(() => {
+        // this is where submit button magic happens
+        schema.isValid(formValues).then(valid => setDisabled(!valid));
+    }, [formValues]);
 
     return <StyledForm onSubmit={onSubmit}>
         <h2>Add Loot</h2>
         <div className='errors'>
             {/* errors here*/}
-            <div>{errors.name}</div>
-            <div>{errors.value}</div>
+            <div>{formErrors.name}</div>
+            <div>{formErrors.value}</div>
         </div>
         {/* Form */}
         <div className='form-group inputs'>
@@ -77,7 +116,7 @@ export default function LootForm(props) {
                 <label><p>Name</p>
                     <input
                         id='name'
-                        value={values.name}
+                        value={formValues.name}
                         onChange={onChange}
                         name='name'
                         type='text'
@@ -88,7 +127,7 @@ export default function LootForm(props) {
                 <label><p>Value</p>
                     <input
                         id='value'
-                        value={values.value}
+                        value={formValues.value}
                         onChange={onChange}
                         name='value'
                         type='text'
@@ -97,6 +136,5 @@ export default function LootForm(props) {
             </div>
             <button type='submit' id='submitBtn' disabled={disabled}>Add Loot</button>
         </div>
-
     </StyledForm>
 }

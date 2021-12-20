@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import EditForm from './EditForm';
 
 const StyledDiv = styled.div`
     margin: 1% auto;
@@ -29,12 +30,25 @@ const StyledDiv = styled.div`
         padding: 1%;
         margin: 1% auto;
     }
+    .hidden {
+        display: none;
+    }
 `
 
-function Loot({ details, editLoot, deleteLoot, sellLoot }) {
+const editLoot = lootElem => {
+    // hide current loot details
+    const lootDetails = document.getElementsByClassName('lootDetails');
+    lootDetails.classList.toggle('hidden');
+    // show edit form
+    const editForm = document.getElementById('editForm');
+    editForm.classList.toggle('hidden');
+}
+
+function Loot({ details, deleteLoot, sellLoot }) {
     if (!details) {
         return <h3>Working fetching your loot...</h3>
     }
+
     const lootElem = {
         id: details.id,
         name: details.name,
@@ -44,9 +58,10 @@ function Loot({ details, editLoot, deleteLoot, sellLoot }) {
     return (
         <StyledDiv className='loot container'>
             <div className='topButtons'>
-                <button id='editBtn'>✏️</button>
+                <button id='editBtn' onClick={() => editLoot(lootElem)}>✏️</button>
                 <button id='deleteBtn' onClick={() => deleteLoot(lootElem)}>❌</button>
             </div>
+            <EditForm id='editForm' className='hidden' loot={lootElem}/>
             <div className='lootDetails'>
                 <p>Name: {details.name}</p>
                 <p>Value: {details.value}</p>
