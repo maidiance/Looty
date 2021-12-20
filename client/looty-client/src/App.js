@@ -94,7 +94,7 @@ function App() {
         disabled={disabled}
         errors={formErrors}
       />
-      <LootDisplay lootBag={lootBag}/>
+      <LootDisplay lootBag={lootBag} setLootBag={setLootBag} />
     </div>
   );
 }

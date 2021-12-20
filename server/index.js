@@ -11,9 +11,6 @@ console.log("Depends loaded")
 
 // getting unclaimed loot
 app.get("/api/unclaimed", (req,res) => {
-// console.log("----------------------------------")
-// console.log(req);
-// console.log("----------------------------------")
 sql_query="select * from loot_register where claimed_by='none' ";
 console.log('unclaimed loot', sql_query);
 db.query(sql_query, (err,result) => {
@@ -48,9 +45,9 @@ app.post("/api/newLoot", (req, res) => {
 })
 
 // delete loot of id
-app.delete("/api/delete", (req, res) => {
-    sql_query = `delete from loot_register where id=${req.body}`;
-    console.log('req', req);
+app.post("/api/deleteLoot", (req, res) => {
+    // sql_query = `delete from loot_register where id=${req.body}`;
+    console.log('req.body', req.body);
     console.log('delete', sql_query);
 })
 

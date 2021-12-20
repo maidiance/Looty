@@ -31,22 +31,28 @@ const StyledDiv = styled.div`
     }
 `
 
-function Loot({ key, details, editLoot, deleteLoot, sellLoot }) {
+function Loot({ details, editLoot, deleteLoot, sellLoot }) {
     if (!details) {
         return <h3>Working fetching your loot...</h3>
     }
+    const lootElem = {
+        id: details.id,
+        name: details.name,
+        value: details.value,
+    };
+    
     return (
         <StyledDiv className='loot container'>
             <div className='topButtons'>
-                <button onclick={editLoot(key)} id='editBtn'>✏️</button>
-                <button onclick={deleteLoot(key)} id='deleteBtn'>❌</button>
+                <button id='editBtn'>✏️</button>
+                <button id='deleteBtn' onClick={() => deleteLoot(lootElem)}>❌</button>
             </div>
             <div className='lootDetails'>
                 <p>Name: {details.name}</p>
                 <p>Value: {details.value}</p>
                 <p>Claimed by: {details.claimedBy || 'none'}</p>
             </div>
-            <button onclick={sellLoot(key)} id='sellBtn'>Sell Loot</button>
+            <button id='sellBtn'>Sell Loot</button>
         </StyledDiv>
     )
 }
