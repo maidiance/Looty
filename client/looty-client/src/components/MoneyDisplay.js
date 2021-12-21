@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const StyledDiv = styled.div`
-    width: 50%;
+    width: 45%;
     margin: 0 auto;
     padding: 0;
     background-color: ${props => props.theme.gold};
