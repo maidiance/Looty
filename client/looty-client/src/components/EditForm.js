@@ -29,6 +29,7 @@ const StyledForm = styled.form`
 `
 
 export default function EditForm(props) {
+    // set up of form values and errors
     const initialFormValues = {
         name: '',
         value: '',
@@ -40,12 +41,14 @@ export default function EditForm(props) {
     const [formValues, setFormValues] = useState(initialFormValues);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [disabled, setDisabled] = useState(true);
+    // validating form values
     const validate = (name, value) => {
         yup.reach(schema, name)
             .validate(value)
             .then(() => setFormErrors({ ...formErrors, [name]: '' }))
             .catch(err => setFormErrors({ ...formErrors, [name]: err.errors[0] }))
     }
+    // what happens when we change a form value
     const onChange = evt => {
         const { name, value } = evt.target;
         validate(name, value);
@@ -54,6 +57,7 @@ export default function EditForm(props) {
             [name]: value,
         })
     }
+    // what happens when we submit the form
     const onSubmit = evt => {
         evt.preventDefault();
         const editAttempt = {
@@ -63,12 +67,13 @@ export default function EditForm(props) {
         }
         postEdit(editAttempt);
     }
+    // post the edit
     const postEdit = editAttempt => {
         // create the loot to add
         const editedLoot = {
             name: editAttempt.name,
             value: editAttempt.value,
-            id: props.loot.id,
+            id: editAttempt.id,
         }
         // update 'internal' data
         props.setLootBag(

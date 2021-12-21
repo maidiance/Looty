@@ -49,6 +49,7 @@ const StyledForm = styled.form`
 `
 
 export default function LootForm(props) {
+    // set up of form values and errors
     const initialFormValues = {
         name: '',
         value: '',
@@ -60,7 +61,7 @@ export default function LootForm(props) {
     const [formValues, setFormValues] = useState(initialFormValues);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [disabled, setDisabled] = useState(true);
-
+    // validating form values
     const validate = (name, value) => {
         // validate data
         yup.reach(schema, name)
@@ -68,7 +69,7 @@ export default function LootForm(props) {
           .then(() => setFormErrors({ ...formErrors, [name]: '' }))
           .catch(err => setFormErrors({ ...formErrors, [name]: err.errors[0] }))
     }
-  
+    // what happens when we change a form value
     const onChange = evt => {
         const { name, value } = evt.target;
         validate(name, value);
@@ -77,20 +78,25 @@ export default function LootForm(props) {
             [name]: value
         })
     }
-  
+    // what happens when we submit the form
     const onSubmit = evt => {
         evt.preventDefault();
         const newLoot = {
             name: formValues.name.trim(),
-            value: formValues.value.trim(), 
+            value: formValues.value.trim(),
+            claimed_by: 'none',
         }
         postNewLoot(newLoot);
     }
-
+    // post the loot
     const postNewLoot = newLoot => {
         axios.post('http://localhost:3002/api/newLoot', newLoot)
             .then(resp => {
-                props.setLootBag([newLoot, ...props.lootBag ]);
+                const lootToAdd = {
+                    ...newLoot,
+                    id: resp.data.insertId,
+                }
+                props.setLootBag([lootToAdd, ...props.lootBag ]);
             })
             .catch(err => {
                 console.err('error');

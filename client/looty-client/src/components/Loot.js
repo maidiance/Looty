@@ -38,6 +38,7 @@ const StyledDiv = styled.div`
 
 function Loot({ details, lootBag, setLootBag }) {
     const editLoot = (lootElem) => {
+        // edit form element
         const editForm = document.getElementById('editElem' + lootElem.id);
         if(editForm.classList.contains('hidden')){
             // hide current loot details
@@ -46,6 +47,7 @@ function Loot({ details, lootBag, setLootBag }) {
             // show edit form
             editForm.classList.toggle('hidden');
         } else {
+            // hide edit form
             editForm.classList.toggle('hidden');
         }
     }

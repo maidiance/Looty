@@ -29,7 +29,7 @@ function App() {
     <div className="App">
       <Header />
       <LootForm lootBag={lootBag} setLootBag={setLootBag}/>
-      <LootDisplay lootBag={lootBag} setLootBag={setLootBag} foo={'bar'} />
+      <LootDisplay lootBag={lootBag} setLootBag={setLootBag} />
     </div>
   );
 }
