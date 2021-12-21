@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import Loot from './Loot';
 
@@ -14,42 +13,19 @@ const StyledDiv = styled.div`
 `
 
 export default function LootDisplay(props){
-    const deleteLoot = (lootElem) => {
-        // delete loot from lootBag
-        const updatedLoot = props.lootBag.filter(item => {
-            // return loot that isn't the loot we're deleting
-            return item.id !== lootElem.id;
-        });
-        props.setLootBag(updatedLoot);
-
-        // push changes to db
-        axios.post('http://localhost:3002/api/deleteLoot', lootElem)
-            .then(resp => {
-                // console.log('delete: ', resp);
-            })
-            .catch(err => {
-                console.error(err);
-            })
-    }
-    const sellLoot = (lootId) => {
-        // we will probably need playerId too
-        // remove loot from lootBag and put into soldBag ?
-        // claimedBy = 'sold'
-        // push changes to db
-    }
 
     return (
         <StyledDiv className='lootDisplay'>
             {
                 props.lootBag.map(loot => {
-                return(
-                    <Loot 
-                        key={loot.id}
-                        details={loot}
-                        deleteLoot={deleteLoot}
-                        sellLoot={sellLoot}
-                    />
-                )
+                    return(
+                        <Loot 
+                            key={loot.id}
+                            details={loot}
+                            lootBag={props.lootBag}
+                            setLootBag={props.setLootBag}
+                        />
+                    )
                 })
             }
         </StyledDiv>

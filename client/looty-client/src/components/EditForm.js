@@ -55,6 +55,7 @@ export default function EditForm(props) {
         })
     }
     const onSubmit = evt => {
+        evt.preventDefault();
         const editAttempt = {
             name: formValues.name.trim(),
             value: formValues.value.trim(),
@@ -78,18 +79,23 @@ export default function EditForm(props) {
                 console.error(err);
             })
         // add loot to lootBag
-        props.setLootBag([ ...props.lootBag, editAttempt ]);
+        const lootToAdd = {
+            name: editAttempt.name,
+            value: editAttempt.value,
+            id: props.loot.id,
+        }
+        props.setLootBag([ ...props.lootBag, lootToAdd ]);
         // push changes to db
         axios.post('http://localhost:3002/api/newLoot', editAttempt)
             .then(resp => {
                 props.setLootBag([editAttempt, ...props.lootBag ]);
             })
             .catch(err => {
-                console.err('error');
+                console.error(err);
             })
             .finally(() => setFormValues(initialFormValues))
         // hide edit form
-        const editForm = document.getElementsByClassName('editForm');
+        const editForm = document.getElementsByClassName('editForm')[0];
         editForm.classList.toggle('hidden');
     }
     useEffect(() => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import EditForm from './EditForm';
 
@@ -35,16 +36,33 @@ const StyledDiv = styled.div`
     }
 `
 
-const editLoot = lootElem => {
-    // hide current loot details
-    const lootDetails = document.getElementsByClassName('lootDetails');
-    lootDetails.classList.toggle('hidden');
-    // show edit form
-    const editForm = document.getElementById('editForm');
-    editForm.classList.toggle('hidden');
-}
+function Loot({ details, lootBag, setLootBag }) {
+    const editLoot = () => {
+        // hide current loot details
+        const lootDetails = document.getElementsByClassName('lootDetails');
+        lootDetails.classList.toggle('hidden');
+        // show edit form
+        const editForm = document.getElementById('editForm');
+        editForm.classList.toggle('hidden');
+    }
+    const deleteLoot = (lootElem) => {
+        // delete loot from lootBag
+        const updatedLoot = lootBag.filter(item => {
+            // return loot that isn't the loot we're deleting
+            return item.id !== lootElem.id;
+        });
+        setLootBag(updatedLoot);
+    
+        // push changes to db
+        axios.post('http://localhost:3002/api/deleteLoot', lootElem)
+            .then(resp => {
+                // console.log('delete: ', resp);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
 
-function Loot({ details, deleteLoot, sellLoot }) {
     if (!details) {
         return <h3>Working fetching your loot...</h3>
     }
@@ -61,7 +79,14 @@ function Loot({ details, deleteLoot, sellLoot }) {
                 <button id='editBtn' onClick={() => editLoot(lootElem)}>✏️</button>
                 <button id='deleteBtn' onClick={() => deleteLoot(lootElem)}>❌</button>
             </div>
-            <EditForm id='editForm' className='hidden' loot={lootElem}/>
+            <EditForm className='hidden'
+                lootBag={lootBag}
+                setLootBag={setLootBag}
+                loot={lootElem}
+            />
+            {
+                console.log('key', details.id)
+            }
             <div className='lootDetails'>
                 <p>Name: {details.name}</p>
                 <p>Value: {details.value}</p>
