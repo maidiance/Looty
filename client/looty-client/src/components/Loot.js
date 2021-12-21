@@ -37,13 +37,17 @@ const StyledDiv = styled.div`
 `
 
 function Loot({ details, lootBag, setLootBag }) {
-    const editLoot = () => {
-        // hide current loot details
-        const lootDetails = document.getElementsByClassName('lootDetails');
-        lootDetails.classList.toggle('hidden');
-        // show edit form
-        const editForm = document.getElementById('editForm');
-        editForm.classList.toggle('hidden');
+    const editLoot = (lootElem) => {
+        const editForm = document.getElementById('editElem' + lootElem.id);
+        if(editForm.classList.contains('hidden')){
+            // hide current loot details
+            const lootDetails = document.getElementById('lootElem' + lootElem.id);
+            lootDetails.classList.toggle('hidden');
+            // show edit form
+            editForm.classList.toggle('hidden');
+        } else {
+            editForm.classList.toggle('hidden');
+        }
     }
     const deleteLoot = (lootElem) => {
         // delete loot from lootBag
@@ -56,7 +60,7 @@ function Loot({ details, lootBag, setLootBag }) {
         // push changes to db
         axios.post('http://localhost:3002/api/deleteLoot', lootElem)
             .then(resp => {
-                // console.log('delete: ', resp);
+                console.log('delete: ', lootElem);
             })
             .catch(err => {
                 console.error(err);
@@ -74,19 +78,16 @@ function Loot({ details, lootBag, setLootBag }) {
     };
     
     return (
-        <StyledDiv className='loot container'>
+        <StyledDiv className='loot container' id={'lootElem' + lootElem.id}>
             <div className='topButtons'>
                 <button id='editBtn' onClick={() => editLoot(lootElem)}>✏️</button>
                 <button id='deleteBtn' onClick={() => deleteLoot(lootElem)}>❌</button>
             </div>
-            <EditForm className='hidden'
+            <EditForm
                 lootBag={lootBag}
                 setLootBag={setLootBag}
                 loot={lootElem}
             />
-            {
-                console.log('key', details.id)
-            }
             <div className='lootDetails'>
                 <p>Name: {details.name}</p>
                 <p>Value: {details.value}</p>

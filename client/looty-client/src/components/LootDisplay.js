@@ -13,7 +13,6 @@ const StyledDiv = styled.div`
 `
 
 export default function LootDisplay(props){
-
     return (
         <StyledDiv className='lootDisplay'>
             {

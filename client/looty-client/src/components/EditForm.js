@@ -30,8 +30,8 @@ const StyledForm = styled.form`
 
 export default function EditForm(props) {
     const initialFormValues = {
-        name: props.loot.name,
-        value: props.loot.value,
+        name: '',
+        value: '',
     }
     const initialFormErrors = {
         name: '',
@@ -58,44 +58,51 @@ export default function EditForm(props) {
         evt.preventDefault();
         const editAttempt = {
             name: formValues.name.trim(),
-            value: formValues.value.trim(),
+            value: formValues.value,
+            id: props.loot.id,
         }
         postEdit(editAttempt);
     }
     const postEdit = editAttempt => {
-        // delete loot from lootBag
-        const updatedLoot = props.lootBag.filter(item => {
-            // return loot that isn't the loot we're deleting
-            return item.id !== editAttempt.id;
-        });
-        props.setLootBag(updatedLoot);
-
-        // push changes to db
-        axios.post('http://localhost:3002/api/deleteLoot', editAttempt)
-            .then(resp => {
-                // console.log('delete: ', resp);
-            })
-            .catch(err => {
-                console.error(err);
-            })
-        // add loot to lootBag
-        const lootToAdd = {
+        // create the loot to add
+        const editedLoot = {
             name: editAttempt.name,
             value: editAttempt.value,
             id: props.loot.id,
         }
-        props.setLootBag([ ...props.lootBag, lootToAdd ]);
-        // push changes to db
-        axios.post('http://localhost:3002/api/newLoot', editAttempt)
+        // update 'internal' data
+        props.setLootBag(
+            props.lootBag.map(item => {
+                if(item.id === editAttempt.id){
+                    item.name = editAttempt.name;
+                    item.value = editAttempt.value;
+                }
+                return item;
+                }
+            )
+        );
+        // update DOM
+        const lootElem = document.getElementById('lootElem' + editedLoot.id);
+        const nameElem = lootElem.children[2].children[0];
+        nameElem.innerHTML = `Name: ${editAttempt.name}`;
+        const valueElem = lootElem.children[2].children[1];
+        valueElem.innerHTML = `Value: ${editAttempt.value}`;
+        const editElem = lootElem.children[1].children[2];
+        const editName = editElem.children[0].children[0].children[1];
+        editName.value = `Name: ${editAttempt.name}`;
+        const editValue = editElem.children[1];
+        editValue.value = `Value: ${editAttempt.value}`;
+        // modify db
+        axios.post('http://localhost:3002/api/updateLoot', editedLoot)
             .then(resp => {
-                props.setLootBag([editAttempt, ...props.lootBag ]);
             })
             .catch(err => {
                 console.error(err);
             })
             .finally(() => setFormValues(initialFormValues))
+        
         // hide edit form
-        const editForm = document.getElementsByClassName('editForm')[0];
+        const editForm = document.getElementById('editElem' + props.loot.id);
         editForm.classList.toggle('hidden');
     }
     useEffect(() => {
@@ -104,7 +111,7 @@ export default function EditForm(props) {
     }, [formValues]);
 
     return  (
-        <StyledForm className='editForm' onSubmit={onSubmit}>
+        <StyledForm className='editForm hidden' id={'editElem' + props.loot.id} onSubmit={onSubmit}>
             <h2>Edit Loot</h2>
             <div className='errors'>
                 {/* errors here*/}
