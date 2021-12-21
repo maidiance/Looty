@@ -68,7 +68,9 @@ function Loot({ details, lootBag, setLootBag }) {
                 console.error(err);
             })
     }
+    const sellLoot = (lootElem) => {
 
+    }
     if (!details) {
         return <h3>Working fetching your loot...</h3>
     }
@@ -95,7 +97,7 @@ function Loot({ details, lootBag, setLootBag }) {
                 <p>Value: {details.value}</p>
                 <p>Claimed by: {details.claimedBy || 'none'}</p>
             </div>
-            <button id='sellBtn'>Sell Loot</button>
+            <button id='sellBtn' onClick={() => sellLoot(lootElem)}>Sell Loot</button>
         </StyledDiv>
     )
 }
