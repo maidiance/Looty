@@ -20,7 +20,8 @@ const StyledDiv = styled.div`
 export default function MoneyDisplay(props){
     useEffect(() => {
         // this is where submit button magic happens
-        const moneyToSplit = props.moneyBag > 0;
+        const moneyToSplit = props.moneyBag > 0
+            && false; // TODO check if it can be split by num of players
         if(moneyToSplit){
             setDisabled(false);
         } else {
