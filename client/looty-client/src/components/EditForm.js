@@ -86,17 +86,8 @@ export default function EditForm(props) {
                 }
             )
         );
-        // update DOM
-        const lootElem = document.getElementById('lootElem' + editedLoot.id);
-        const nameElem = lootElem.children[2].children[0];
-        nameElem.innerHTML = `Name: ${editAttempt.name}`;
-        const valueElem = lootElem.children[2].children[1];
-        valueElem.innerHTML = `Value: ${editAttempt.value}`;
-        const editElem = lootElem.children[1].children[2];
-        const editName = editElem.children[0].children[0].children[1];
-        editName.value = `Name: ${editAttempt.name}`;
-        const editValue = editElem.children[1];
-        editValue.value = `Value: ${editAttempt.value}`;
+        // update form
+        setFormValues(initialFormValues);
         // modify db
         axios.post('http://localhost:3002/api/updateLoot', editedLoot)
             .then(resp => {
