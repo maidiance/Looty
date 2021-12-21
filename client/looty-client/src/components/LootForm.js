@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as yup from 'yup';
 import styled from 'styled-components';
-import schema from '../validation/formSchema';
+import schema from '../validation/lootSchema';
 
 const StyledForm = styled.form`
     display: flex;

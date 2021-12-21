@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import * as yup from 'yup';
-import schema from '../validation/formSchema';
+import schema from '../validation/lootSchema';
 
 const StyledForm = styled.form`
     box-sizing: border-box;

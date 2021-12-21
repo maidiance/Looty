@@ -4,11 +4,13 @@ import './App.css';
 import Header from './components/Header';
 import LootForm from './components/LootForm';
 import LootDisplay from './components/LootDisplay';
+import MoneyDisplay from './components/MoneyDisplay';
 
 const initialLoot = [];
 
 function App() {
   const [lootBag, setLootBag] = useState(initialLoot);
+  const [moneyBag, setMoneyBag] = useState(0);
 
   const getLootBag = () => {
     axios.get('http://localhost:3002/api/loot')
@@ -28,7 +30,8 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <LootForm lootBag={lootBag} setLootBag={setLootBag}/>
+      <LootForm lootBag={lootBag} setLootBag={setLootBag} />
+      <MoneyDisplay moneyBag={moneyBag} setMoneyBag={setMoneyBag} />
       <LootDisplay lootBag={lootBag} setLootBag={setLootBag} />
     </div>
   );
