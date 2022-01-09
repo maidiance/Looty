@@ -75,4 +75,9 @@ Then pull the elections table with SELECT COUNT (DISTINCT character-id) from ele
 
 Election conflict resolution
 
-Overview: Conflict resolution is the meat of looty.  Multiple players may try to need the same item.  
+Overview: Conflict resolution is the meat of looty.  Multiple players may try to need the same item, so only one of them can get it. Or even more complicated, there are several copies of the same item and everyone wants one.  This will be common with potions and other consumables.  THe issues comes about with how looty handles each item individually.  If there are 5 potions, then there are five items.  if everyone needs the first one and greeds the rest, then the potions will be distributed effectively randomly.  The first need will be a random rolls from all characters, followed by the greed rolls.  Conflict resolution will happen entirely on the app server.
+
+App-Server:
+We are going to do this is passes.  The greed pass, 
+After the server has determined that all elections have been made, we go into conflict resolution.  We grab a list of all distinct item id that have been bid for and use them as the key for a dictionary.  
+
