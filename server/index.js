@@ -1,76 +1,36 @@
-const express = require('express');
-const db = require('./db')
-const cors = require('cors')
+// BASE SETUP
+// =============================================================================
 
-const app = express();
-const  PORT = 3002;
-app.use(cors());
-app.use(express.json())
+// call the packages we need
+var express    = require('express');        // call express
+var app        = express();                 // define our app using express
+var bodyParser = require('body-parser');
+var db         = require('./db.js')
 
-console.log("Depends loaded")
 
-// getting unclaimed loot
-app.get("/api/unclaimed", (req,res) => {
-    sql_query="select * from loot_register where claimed_by='none' ";
-    console.log('unclaimed loot', sql_query);
-    db.query(sql_query, (err, result) => {
-        if(err) {
-            console.log(err);
-        }
-        res.send(result);
-    });
-})
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-// getting all loot
-app.get("/api/loot", (req, res) => {
-    sql_query = "select * from loot_register";
-    console.log('get all loot', sql_query);
-    db.query(sql_query, (err, result) => {
-        if(err) {
-            console.log(err);
-        }
-        res.send(result);
-    });
-})
+var port = process.env.PORT || 8080;        // set our port
 
-// post new loot
-app.post("/api/newLoot", (req, res) => {
-    sql_query = `insert into loot_register (name, value ) values ('${req.body.name}', ${req.body.value})`;
-    console.log('post new loot', sql_query);
-    db.query(sql_query, (err, result) => {
-        if(err) {
-            console.log(err);
-        }
-        console.log("post new loot result", result);
-        res.send(result);
-    });
-})
+// ROUTES FOR OUR API
+// =============================================================================
+var router = express.Router();              // get an instance of the express Router
 
-// delete loot of id
-app.post("/api/deleteLoot", (req, res) => {
-    sql_query = `delete from loot_register where id=${req.body.id}`;
-    console.log('delete query: ', sql_query);
-    db.query(sql_query, (err, result) => {
-        if(err) {
-            console.log(err);
-        }
-        res.send(result);
-    })
-})
+// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+router.get('/', function(req, res) {
+    res.json({ message: 'hooray! welcome to our api!' });
+});
 
-// update loot of id
-app.post("/api/updateLoot", (req, res) => {
-    sql_query = `update loot_register set name='${req.body.name}', value=${req.body.value} where id=${req.body.id}`
-    console.log('update query', sql_query);
-    db.query(sql_query, (err, result) => {
-        if(err) {
-            console.log(err);
-        }
-        res.send(result);
-    })
-})
+// more routes for our API will happen here
 
-// IMPORTANT!! DO NOT DELETE 
-app.listen(PORT, ()=>{
-    console.log("Listening")
-})
+// REGISTER OUR ROUTES -------------------------------
+// all of our routes will be prefixed with /api
+app.use('/api', router);
+
+// START THE SERVER
+// =============================================================================
+app.listen(port);
+console.log('Magic happens on port ' + port);
