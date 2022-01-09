@@ -1,0 +1,57 @@
+Looty design doc
+Critical Functions:
+Add loot to the register
+Retrieve loot list with sorting and filtering
+player elections
+conflict resolution
+Report what plays got what items after resolution.
+Manual loot distribution intervention
+
+Additional functions:
+campaign segregation
+logon and security
+User management
+
+--------------------
+
+Add loot to the register:  Loot needs to be added by a DM.
+
+Web-Server:
+In the initial release, this DM page will be protected by a simple HTTP authentication since it's just going to be me and Mai.  The address will be Looty.com/gm
+
+Client:
+The add loot page design is not yet decided.  Value entry will be in gold pieces and converted to copper piece values in code.
+Sending loot loot to the database will be a POST request against /API/loot.  in the future, there will be a campaign field in the URL to add loot to the specified campaign )/API/addLoot?camp=##).  The data sent will be a serialized JSON file.  The JSON file will be an array of JSON key-value pairs.  The keys will be Name, Count, and Value.  Value must be in copper pieces.
+
+App-Server:
+There will be an endpoint called POST /API/loot.  This API will accept an array of key-value pairs.  Keys are Name, Count, and Value representing the loot the DM wishes to add to the register.  
+The app server add this loot to the database.  It will use a loop to add each item as an individual to the table.  Therefore if there are two longswords, there will be two rows added to the table.
+Value is in copper pieces.  
+The SQL statement will be constructed by sting concatenation and all adds will be accomplished with a single DB call.
+SQL: insert into loot_register (name,value) values (item1_name, item1_value)
+
+----------------------
+
+Retrieve loot list: Pull loot based on requirements.
+Client: 
+Be ready to receive and display a huge table of information.  Any request to get a list of loot will be made against GET /API/loot.  This endpoint will allow several URL fields to support sorting, filtering, and grouping.  Initial release will be sorting  and basic filtering only.  Requests against the endpoint without fields will result in the full loot list returned in the order it was added.  
+The field 'sort' will let you specify a column to sort the list by.  Sort=name will cause a table to be returned sorted by the name of the loot.  Possible sort values are name, value, claimed_by.
+The field "filter" will return a table with items that match the filter.  Possible values as sold, claimed, bagged and their reverse.  Unsold, unclaimed, unbagged.
+For example, the request "GET /API/loot?sort=value$filter=unclaimed" will get you a list of unclaimed loot sorted by value.
+FUTURE: When specifying a filter of 'claimed' and optional field of character will be available to filter to loot claimed by a particular character.  The API will expect a number indicating the database id of the character.
+
+App-Server:
+The endpoint for loot retrieval will be GET /API/loot.  This URL will have the fiends of filter and sort.
+The filter field will be handled by first checking if it exists.  If it does, check it against the list of possible values: sold, claimed, bagged, Unsold, unclaimed, unbagged.
+FUTURE: if the filter is claimed, check for a character field to return loot claimed by a character.  If no such field exists, return all claimed loot.
+The sort field will be handled by first checking if it exists.  If it does, check it against the list of possible values: name, value, claimed_by.  Name and value are trivial to add to the SQL statement.  claimed_by is trickier because if implemented naively, it'll return by character id number, not name.  We will first need to resolve the IDs into Names, then filter by that.
+SQL: select * fromn loot_register
+Check if there is a filter.  If there is, concantinate an appropriate WHERE clause.  (where claimed_by is null)
+Check if there is a sort.  If there is, concantinate an appropriate ORDER BY clause. (order by name)
+Add the ;.
+
+-------------------
+
+Player Elections: Players want to select loot.
+
+Overview: Player elections will impliment the World of Warcraft need and greed system.  
