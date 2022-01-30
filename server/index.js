@@ -5,7 +5,7 @@
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
-//var db         = require('./db.js')
+var db         = require('./db.js')
 
 
 // configure app to use bodyParser()
@@ -35,4 +35,11 @@ app.use('/api', router);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
+console.log("---------------")
+console.log("Running Query")
+db.query("select * from test", (err, results,fields) => {
+    if (err) throw err;
+    console.log(fields);
+    console.log(results);
+});
 console.log('Magic happens on port ' + port);
