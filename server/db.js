@@ -21,16 +21,4 @@ else
 	})
 }
 
-console.log("-------------")
-console.log("Creating connection.")
-db.connect(function(err) {
-	if (err) {
-		console.log(err.stack);
-	}
-})
-console.log("----------")
-console.log("Logging DB object")
-
-console.log(db)
-
 module.exports = db;
