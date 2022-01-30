@@ -2,21 +2,32 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import Header from './components/Header';
-import LootForm from './components/LootForm';
+import CharacterSelect from './components/CharacterSelect';
 import LootDisplay from './components/LootDisplay';
-import MoneyDisplay from './components/MoneyDisplay';
 
 const initialLoot = [];
+const initialCharacters = [];
 
 function App() {
   const [lootBag, setLootBag] = useState(initialLoot);
-  const [moneyBag, setMoneyBag] = useState(0);
+  const [characters, setCharacters] = useState(initialCharacters);
+  const [activeChar, setActiveChar] = useState({});
 
   const getLootBag = () => {
-    axios.get('http://localhost:3002/api/loot')
+    axios.get('http://localhost:3002/api/unclaimed')
       .then(resp => {
         // console.log('get', resp);
         setLootBag(resp.data);
+      })
+      .catch(err => {
+        console.error(err);
+      })
+  }
+
+  const getCharacters = () => {
+    axios.get('http://localhost:3002/api/characters')
+      .then(resp => {
+        setCharacters(resp.data);
       })
       .catch(err => {
         console.error(err);
@@ -30,8 +41,7 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <LootForm lootBag={lootBag} setLootBag={setLootBag} />
-      <MoneyDisplay moneyBag={moneyBag} setMoneyBag={setMoneyBag} />
+      <CharacterSelect activeChar={activeChar} setActiveChar={setActiveChar} />
       <LootDisplay lootBag={lootBag} setLootBag={setLootBag} />
     </div>
   );
