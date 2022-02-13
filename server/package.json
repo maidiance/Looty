@@ -4,7 +4,9 @@
   "description": "REST backend for looty ",
   "main": "index.js",
   "scripts": {
-    "test": "true"
+    "test": "true",
+    "start": "node ./index.js",
+    "server": "nodemon ./index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,10 @@
     "body-parser": "^1.19.1",
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "knex": "^1.0.3",
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
