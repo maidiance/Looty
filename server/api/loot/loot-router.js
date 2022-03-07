@@ -33,4 +33,10 @@ router.post('/', validateLoot, async (req, res) => {
     }
 });
 
+router.put('/:id', validateLoot, async (req, res) => {
+    const { id } = req.params;
+    const updated = Loots.update(id, req.body);
+    res.status(200).json(updated);
+});
+
 module.exports = router;

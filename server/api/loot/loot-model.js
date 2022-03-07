@@ -42,10 +42,16 @@ function insert(loots) {
         .catch((err) => { console.log( err); throw err })
 }
 
-function update() {
-    return;
+async function update(id, changes) {
+    await knex('loot_register')
+        .where({loot_id: id})
+        .update(changes);
+    let result = await getById(id);
+    return result;
 }
 
-function remove() {
-    return;
+async function remove(id) {
+    let result = await getById(id);
+    await knex('loot_register').where({loot_id: id}).del();
+    return result;
 }
