@@ -153,4 +153,27 @@ describe('test users endpoints', () => {
             expect(result.body.message).toMatch(/invalid role/i);
         });
     });
+
+    describe('[POST] /api/users/login', () => {
+        test('responds with correct status and message on invalid credentials', async() => {
+            let result = await request(server)
+                .post('/api/users/login')
+                .send({username: 'Captain Marvel', password: 'foobar'});
+            expect(result.status).toBe(401);
+            expect(result.body.message).toMatch(/invalid user/i);
+        });
+
+        test('responds with correct status and message on valid credentials', async() => {
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'Astro', password: 'foobar'});
+            let result = await request(server)
+                .post('/api/users/login')
+                .send({username: 'Astro', password: 'foobar'});
+            console.log(result.body.message);
+            expect(result.status).toBe(200);
+            expect(result.body.message).toMatch(/welcome Astro/i);
+            expect(result.body.token).not.toBeNull();
+        });
+    })
 });

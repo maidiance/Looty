@@ -11,14 +11,20 @@ async function validateUser (req, res, next) {
     } else if ((role && role.trim()) && (role != 'admin' && role != 'dm')) {
         res.status(400).json({message: 'invalid role'});
     } else {
-        const user = await Users.findBy({username});
+        next();
+    }
+}
+
+async function usernameUnique (req, res, next) {
+    const { username } = req.body;
+    const user = await Users.findBy({username});
         if(user.length >= 1){
             res.status(400).json({message: 'username must be unique'});
             res.end();
-        } else {
+        }
+        else {
             next();
         }
-    }
 }
 
 async function validateUsername (req, res, next) {
@@ -51,5 +57,6 @@ const validateUserId = (req, res, next) => {
 module.exports = {
     validateUser,
     validateUsername,
-    validateUserId
+    validateUserId,
+    usernameUnique
 }
