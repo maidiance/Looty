@@ -89,3 +89,68 @@ describe('test Loot model', () => {
         expect(result.sold).toBe(0);
     });
 });
+
+describe('test users endpoints', () => {
+    describe('[POST] /api/users/register', () => {
+        test('responds with correct status and user is added properly', async() => {
+            let result = await request(server)
+                .post('/api/users/register')
+                .send({username: 'test', password: 'pass'});
+            expect(result.status).toBe(201);
+            result = await Users.findById(1);
+            expect(result.user_id).toBe(1);
+            expect(result.username).toBe('test');
+            expect(result.password).not.toBe('pass');
+        });
+
+        test('responds with correct status and message without username', async() => {
+            let result = await request(server)
+              .post('/api/users/register')
+              .send({password: 'foobar'});
+            expect(result.status).toBe(400);
+            expect(result.body.message).toMatch(/username required/i);
+        });
+
+        test('responds with correct status and message without password', async() => {
+            let result = await request(server)
+              .post('/api/users/register')
+              .send({username: 'foobar'});
+            expect(result.status).toBe(400);
+            expect(result.body.message).toMatch(/password required/i);
+        });
+
+        test('responds with correct status and message with duplicate username', async() => {
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'duplicate', password: 'pass'});
+            let result = await request(server)
+                .post('/api/users/register')
+                .send({username: 'duplicate', password: 'pass'});
+            expect(result.status).toBe(400);
+            expect(result.body.message).toMatch(/username must be unique/i);
+        });
+
+        test('responds with correct status and message valid role testing', async() => {
+            let result = await request(server)
+                .post('/api/users/register')
+                .send({username: 'happy', password: 'role', role: 'dm'});
+            expect(result.status).toBe(201);
+            result = await Users.findById(1);
+            expect(result.role).toBe('dm');
+            result = await request(server)
+                .post('/api/users/register')
+                .send({username: 'path', password: 'test', role: 'admin'});
+            expect(result.status).toBe(201);
+            result = await Users.findById(2);
+            expect(result.role).toBe('admin');
+        });
+
+        test('responds with correct status and message invalid role testing', async() => {
+            let result = await request(server)
+                .post('/api/users/register')
+                .send({username: 'unhappy', password: 'role', role: 'test'});
+            expect(result.status).toBe(400);
+            expect(result.body.message).toMatch(/invalid role/i);
+        });
+    });
+});
