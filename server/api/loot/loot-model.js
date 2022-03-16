@@ -44,7 +44,7 @@ async function update(loot_id, changes) {
 }
 
 async function remove(loot_id) {
-    let result = await getById(id);
+    let result = await getById(loot_id);
     await db('loot').where('loot_id', loot_id).del();
     return result;
 }

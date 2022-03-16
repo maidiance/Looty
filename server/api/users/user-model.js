@@ -16,10 +16,11 @@ function findById(id) {
 }
 
 function findBy(filter) {
-    return db('users').where(filter).first();
+    return db('users').where(filter);
 }
 
 async function insert(user) {
     await db('users').insert(user);
-    return findBy({username: user.username});
+    let [result] = await findBy({username: user.username});
+    return result;
 }
