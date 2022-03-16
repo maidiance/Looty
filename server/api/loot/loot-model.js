@@ -20,19 +20,10 @@ function getById(loot_id) {
     
 }
 
-async function insert(loots) {
-    let toInsert = [];
-    loots.forEach(item => {
-        for(let i = 0; i < item.count; i++){
-            let loot = {
-                name: item.name,
-                value: item.value,
-            };
-            toInsert.push(loot);
-        }
-    });
-    await db('loot').insert(toInsert);
-    return loots;
+async function insert(loot){
+    const [id] = await db('loot')
+        .insert(loot);
+    return getById(id);
 }
 
 async function update(loot_id, changes) {

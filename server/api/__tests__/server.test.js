@@ -46,7 +46,7 @@ describe('test User model', () => {
         expect(result.username).toBe('thor');
         expect(result.user_id).toBe(1);
         expect(result.role).toBe('admin');
-      })
+      });
 });
 
 describe('test Loot model', () => {
@@ -68,9 +68,12 @@ describe('test Loot model', () => {
     });
 
     test('can insert loot', async() => {
-        let toInsert = [{name: 'longsword +1', value: 1000, count: 1}, {name: 'ring of protection +1', value: 2000, count: 1}];
-        let result = await Loot.insert(toInsert);
-        expect(result.length).toBe(2);
+        let result = await Loot.insert({name: 'longsword +1', value: 1000});
+        expect(result.loot_id).toBe(1);
+        expect(result.name).toBe('longsword +1');
+        expect(result.claimed).toBe(null);
+        expect(result.bagged).toBe(0);
+        expect(result.sold).toBe(0);
     });
 
     test('can update loot', async() => {
@@ -170,10 +173,75 @@ describe('test users endpoints', () => {
             let result = await request(server)
                 .post('/api/users/login')
                 .send({username: 'Astro', password: 'foobar'});
-            console.log(result.body.message);
             expect(result.status).toBe(200);
             expect(result.body.message).toMatch(/welcome Astro/i);
             expect(result.body.token).not.toBeNull();
         });
-    })
+    });
+});
+
+describe('test loot endpoints', () => {
+    describe('[GET] /api/loot', () => {
+        test('responds with correct status and body', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await Loot.insert({name: 'ring of protection +1', value: 2000});
+            let result = await request(server)
+                .get('/api/loot');
+            expect(result.status).toBe(200);
+            expect(result.body).toHaveLength(2);
+        });
+    });
+
+    describe('[GET] /api/loot/:id', () => {
+        test('responds with correct status and body happy path', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await Loot.insert({name: 'ring of protection +1', value: 2000});
+            let result = await request(server)
+                .get('/api/loot/2');
+            expect(result.status).toBe(200);
+            let item = result.body;
+            expect(item.loot_id).toBe(2);
+            expect(item.name).toBe('ring of protection +1');
+            expect(item.claimed).toBe(null);
+            expect(item.bagged).toBe(0);
+            expect(item.sold).toBe(0);
+        });
+
+        test('responds with correct status and body sad path', async() => {
+            let result = await request(server)
+                .get('/api/loot/13');
+            expect(result.status).toBe(404);
+            expect(result.body.message).toMatch(/loot 13 not found/i);
+        });
+    });
+
+    describe('[POST] /api/loot', () => {
+        test('responds with correct status and message no user', async() => {
+            let result = await request(server)
+                .post('/api/loot')
+                .send({name: 'none', value: 0});
+            expect(result.status).toBe(401);
+            expect(result.body.message).toMatch(/token required/i);
+        });
+
+        test('responds with correct status and body happy path', async() => {
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .post('/api/loot')
+                .set('Authorization', login.body.token)
+                .send({name: 'longsword +1', value: 1000});
+            expect(result.status).toBe(201);
+            let loot = result.body;
+            expect(loot.loot_id).toBe(1);
+            expect(loot.name).toBe('longsword +1');
+            expect(loot.claimed).toBe(null);
+            expect(loot.bagged).toBe(0);
+            expect(loot.sold).toBe(0);
+        });
+    });
 });

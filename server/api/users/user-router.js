@@ -30,7 +30,8 @@ router.post('/login', validateUser, validateUsername, (req, res) => {
 function generateToken(user) {
     const payload = {
         subject: user.user_id,
-        username: user.username
+        username: user.username,
+        role: user.role
     };
     return jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
 }

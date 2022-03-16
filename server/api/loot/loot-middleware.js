@@ -16,17 +16,14 @@ function validateLootId (req, res, next) {
 }
 
 function validateLoot (req, res, next) {
-    const loots = req.body;
-    loots.forEach(item => {
-        if(!item.count || item.count < 1){
-            res.status(400).json({message: 'invalid count detected'});
-        } else if (!item.name || !item.name.trim() || item.name.length >= 256){
-            res.status(400).json({message: 'invalid item name'});
-        } else if (!item.value || typeof(item.value) != 'Number' || item.value < 0){
-            res.status(400).json({message: 'invalid value'});
-        }
-    });
-    next();
+    const loot = req.body;
+    if (!loot.name || !loot.name.trim() || loot.name.length >= 256){
+        res.status(400).json({message: 'invalid item name'});
+    } else if (!loot.value || typeof(loot.value) != 'number' || loot.value < 0){
+        res.status(400).json({message: 'invalid value'});
+    } else {
+        next();
+    }
 }
 
 module.exports = {
