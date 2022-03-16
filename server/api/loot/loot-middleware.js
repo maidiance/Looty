@@ -1,21 +1,35 @@
 const Loots = require('./loot-model');
 
-function validateLoot(req, res, next) {
+function validateLootId (req, res, next) {
+    const id = req.params.id;
+    Loots.getById(id)
+        .then(loot => {
+            if(loot == null) {
+                res.status(404).json({message: `loot ${id} not found`});
+            } else {
+                next();
+            }
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not validate loot id'});
+        })
+}
+
+function validateLoot (req, res, next) {
     const loots = req.body;
-    let isValid = true;
-    let toInsert = [];
     loots.forEach(item => {
         if(!item.count || item.count < 1){
-            isValid = false;
+            res.status(400).json({message: 'invalid count detected'});
+        } else if (!item.name || !item.name.trim() || item.name.length >= 256){
+            res.status(400).json({message: 'invalid item name'});
+        } else if (!item.value || typeof(item.value) != 'Number' || item.value < 0){
+            res.status(400).json({message: 'invalid value'});
         }
     });
-    if(isValid){
-        next();
-    } else {
-        res.status(400).json({message: 'invalid count detected'});
-    }
+    next();
 }
 
 module.exports = {
+    validateLootId,
     validateLoot
 }

@@ -1,4 +1,4 @@
-const knex = require('../knex-config');
+const db = require('../data/db-config');
 
 module.exports = {
     get,
@@ -9,49 +9,42 @@ module.exports = {
 }
 
 function get() {
-    return knex.select().from('loot_register')
-        .then(resp => {
-            return resp;
-        })
-        .catch((err) => { console.log( err); throw err })
+    return db('loot');
 }
 
-function getById(id) {
-    return knex.select().from('loot_register')
-        .where({loot_id: id})
-        .then(resp => {
-            return resp;
-        })
-        .catch((err) => { console.log( err); throw err })
+function getById(loot_id) {
+    return db('loot')
+        .where('loot_id', loot_id)
+        .select('loot_id', 'name', 'value', 'claimed', 'bagged', 'sold')
+        .first();
+    
 }
 
-function insert(loots) {
+async function insert(loots) {
     let toInsert = [];
     loots.forEach(item => {
         for(let i = 0; i < item.count; i++){
-            toInsert.push({
+            let loot = {
                 name: item.name,
                 value: item.value,
-            });
+            };
+            toInsert.push(loot);
         }
     });
-    return knex.insert(toInsert).into('loot_register')
-        .then(resp => {
-            return resp;
-        })
-        .catch((err) => { console.log( err); throw err })
+    await db('loot').insert(toInsert);
+    return loots;
 }
 
-async function update(id, changes) {
-    await knex('loot_register')
-        .where({loot_id: id})
+async function update(loot_id, changes) {
+    await db('loot')
+        .where('loot_id', loot_id)
         .update(changes);
-    let result = await getById(id);
+    let result = await getById(loot_id);
     return result;
 }
 
-async function remove(id) {
+async function remove(loot_id) {
     let result = await getById(id);
-    await knex('loot_register').where({loot_id: id}).del();
+    await db('loot').where('loot_id', loot_id).del();
     return result;
 }

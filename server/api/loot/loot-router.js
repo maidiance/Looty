@@ -1,42 +1,59 @@
 const express = require('express');
 const Loots = require('./loot-model.js');
-const { validateLoot } = require('./loot-middleware');
+const { validateLootId, validateLoot } = require('./loot-middleware');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-    const loots = await Loots.get();
-    console.log(loots);
-    if (loots == null) {
-        res.status(404).json({message: 'missing loots'});
-    } else {
-        res.status(200).json(loots);
-    }
+router.get('/', (req, res) => {
+    Loots.get()
+        .then(loot => {
+            res.status(200).json(loot);
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not get all loot'});
+        })
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateLootId, (req, res) => {
     const { id } = req.params;
-    const loot = await Loots.getById(id);
-    if(loot == null || loot.length < 1){
-        res.status(404).json({message: `loot ${id} not found`});
-    } else {
-        res.status(200).json(loot[0]);
-    }
+    Loots.getById(id)
+        .then(loot => {
+            res.status(200).json(loot);
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not get loot by id'})
+        })
 });
 
-router.post('/', validateLoot, async (req, res) => {
-    const loots = req.body;
-    const updated = await Loots.insert(loots);
-    if (updated[0] > 0) {
-        res.status(201).json(loots);
-    } else {
-        res.status(500).json({message: 'failed to post'});
-    }
+router.post('/', validateLoot, (req, res) => {
+    Loots.insert(req.body)
+        .then(loot => {
+            res.status(201).json(loot);
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not post loot'});
+        })
 });
 
-router.put('/:id', validateLoot, async (req, res) => {
+router.put('/:id', validateLootId, validateLoot, (req, res) => {
     const { id } = req.params;
-    const updated = Loots.update(id, req.body);
-    res.status(200).json(updated);
+    Loots.update(id, req.body)
+        .then(loot => {
+            res.status(200).json(loot);
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not put loot'});
+        })
 });
+
+router.delete('/:id', validateLootId, (req, res) => {
+    const { id } = req.params;
+    Loots.remove(id)
+        .then(loot => {
+            res.status(200).json(loot);
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not delete loot'});
+        })
+})
 
 module.exports = router;
