@@ -316,11 +316,54 @@ describe('test loot endpoints', () => {
                 .post('/api/users/login')
                 .send({username: 'bob', password: 'smith'});
             let result = await request(server)
-                .put('/api/loot/13')
+                .put('/api/loot/1')
                 .set('Authorization', login.body.token)
                 .send({name: '', value: 0});
             expect(result.status).toBe(400);
             expect(result.body.message).toMatch(/invalid item name/i);
+        });
+    });
+
+    describe('[DELETE] /api/loot/:id', () => {
+        test('responds with correct status and message no user', async() => {
+            let result = await request(server)
+                .del('/api/loot/1');
+            expect(result.status).toBe(401);
+            expect(result.body.message).toMatch(/token required/i);
+        });
+
+        test('responds with correct status and body happy path', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .del('/api/loot/1')
+                .set('Authorization', login.body.token);
+            expect(result.status).toBe(200);
+            let loot = result.body;
+            expect(loot.loot_id).toBe(1);
+            expect(loot.name).toBe('longsword +1');
+            expect(loot.claimed).toBe(null);
+            expect(loot.bagged).toBe(0);
+            expect(loot.sold).toBe(0);
+        });
+
+        test('responds with correct status and body sad path', async() => {
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .del('/api/loot/13')
+                .set('Authorization', login.body.token);
+            expect(result.status).toBe(404);
+            expect(result.body.message).toMatch(/loot 13 not found/i);
         });
     });
 });
