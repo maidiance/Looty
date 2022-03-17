@@ -262,6 +262,21 @@ describe('test loot endpoints', () => {
             expect(result.status).toBe(400);
             expect(result.body.message).toMatch(/invalid item value/i);
         });
+
+        test('responds with correct status and body unauthorized user', async() => {
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'steve', password: 'smith'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'steve', password: 'smith'});
+            let result = await request(server)
+                .post('/api/loot')
+                .set('Authorization', login.body.token)
+                .send({name: '', value: 1000});
+            expect(result.status).toBe(403);
+            expect(result.body.message).toMatch(/restricted endpoint/i);
+        });
     });
 
     describe('[PUT] /api/loot/:id', () => {
@@ -322,6 +337,22 @@ describe('test loot endpoints', () => {
             expect(result.status).toBe(400);
             expect(result.body.message).toMatch(/invalid item name/i);
         });
+
+        test('responds with correct status and body unauthorized user', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'steve', password: 'smith'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'steve', password: 'smith'});
+            let result = await request(server)
+                .put('/api/loot/1')
+                .set('Authorization', login.body.token)
+                .send({name: 'test', value: 1000});
+            expect(result.status).toBe(403);
+            expect(result.body.message).toMatch(/restricted endpoint/i);
+        });
     });
 
     describe('[DELETE] /api/loot/:id', () => {
@@ -364,6 +395,22 @@ describe('test loot endpoints', () => {
                 .set('Authorization', login.body.token);
             expect(result.status).toBe(404);
             expect(result.body.message).toMatch(/loot 13 not found/i);
+        });
+
+        test('responds with correct status and body unauthorized user', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'steve', password: 'smith'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'steve', password: 'smith'});
+            let result = await request(server)
+                .del('/api/loot/1')
+                .set('Authorization', login.body.token)
+                .send({name: 'test', value: 1000});
+            expect(result.status).toBe(403);
+            expect(result.body.message).toMatch(/restricted endpoint/i);
         });
     });
 });
