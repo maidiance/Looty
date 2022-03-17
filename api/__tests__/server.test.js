@@ -123,9 +123,7 @@ describe('test users endpoints', () => {
         });
 
         test('responds with correct status and message with duplicate username', async() => {
-            await request(server)
-                .post('/api/users/register')
-                .send({username: 'duplicate', password: 'pass'});
+            await db('users').insert({username: 'duplicate', password: 'pass'});
             let result = await request(server)
                 .post('/api/users/register')
                 .send({username: 'duplicate', password: 'pass'});
@@ -273,6 +271,25 @@ describe('test loot endpoints', () => {
                 .send({name: 'none'});
             expect(result.status).toBe(401);
             expect(result.body.message).toMatch(/token required/i);
+        });
+
+        test('responds with correct status and body happy path', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .put('/api/loot/1')
+                .set('Authorization', login.body.token)
+                .send({name: 'ring of protection +1', value: 2000});
+            expect(result.status).toBe(200);
+            let item = result.body;
+            expect(item.loot_id).toBe(1);
+            expect(item.name).toBe('ring of protection +1');
+            expect(item.value).toBe(2000);
         });
     });
 });
