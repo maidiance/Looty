@@ -291,5 +291,36 @@ describe('test loot endpoints', () => {
             expect(item.name).toBe('ring of protection +1');
             expect(item.value).toBe(2000);
         });
+
+        test('responds with correct status and message sad path', async() => {
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .put('/api/loot/13')
+                .set('Authorization', login.body.token)
+                .send({name: 'test', value: 0});
+            expect(result.status).toBe(404);
+            expect(result.body.message).toMatch(/loot 13 not found/i);
+        });
+
+        test('responds with correct status and message with bad body', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .put('/api/loot/13')
+                .set('Authorization', login.body.token)
+                .send({name: '', value: 0});
+            expect(result.status).toBe(400);
+            expect(result.body.message).toMatch(/invalid item name/i);
+        });
     });
 });
