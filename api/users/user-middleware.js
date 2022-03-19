@@ -54,6 +54,21 @@ const validateUserId = (req, res, next) => {
         })
 }
 
+function validateUserId (req, res, next) {
+    const id = req.params.id;
+    Users.findById(id)
+        .then(user => {
+            if(user == null) {
+                res.status(404).json({message: `user ${id} not found`});
+            } else {
+                next();
+            }
+        })
+        .catch(() => {
+            res.status(500).json({message: 'could not validate user id'});
+        })
+}
+
 module.exports = {
     validateUser,
     validateUsername,
