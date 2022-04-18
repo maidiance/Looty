@@ -39,23 +39,8 @@ async function validateUsername (req, res, next) {
     }
 }
 
-const validateUserId = (req, res, next) => {
-    const id = req.params.user_id || req.body.user_id;
-    Users.findById(id)
-        .then(user => {
-            if(user == null) {
-                res.status(404).json({message: `user ${id} not found`});
-            } else {
-                next();
-            }
-        })
-        .catch(() => {
-            res.status(500).json({message: 'could not validate user id'});
-        })
-}
-
 function validateUserId (req, res, next) {
-    const id = req.params.id;
+    const id = req.params.user_id || req.body.user_id;
     Users.findById(id)
         .then(user => {
             if(user == null) {
