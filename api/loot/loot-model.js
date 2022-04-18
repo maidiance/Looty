@@ -23,7 +23,7 @@ function getById(loot_id) {
 
 function getByFilter(filter) {
     return db('loot')
-        .where({filter})
+        .where(filter)
         .select('loot_id', 'name', 'value')
 }
 

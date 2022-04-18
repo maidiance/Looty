@@ -198,6 +198,16 @@ describe('test loot endpoints', () => {
             expect(result.status).toBe(200);
             expect(result.body).toHaveLength(2);
         });
+
+        test('responds with undistributed loot as expected', async() => {
+            await Loot.insert({name: 'teddy bear', value: 0});
+            await Loot.insert({name: 'bagged', value: 0, bagged: true});
+            let result = await request(server)
+                .get('/api/loot?undistributed=true');
+            expect(result.status).toBe(200);
+            expect(result.body).toHaveLength(1);
+            expect(result.body[0].name).toBe('teddy bear');
+        })
     });
 
     describe('[GET] /api/loot/:id', () => {
