@@ -39,7 +39,7 @@ async function validateUsername (req, res, next) {
     }
 }
 
-const validateUserId = (req, res, next) => {
+function validateUserId (req, res, next) {
     const id = req.params.user_id || req.body.user_id;
     Users.findById(id)
         .then(user => {

@@ -3,6 +3,7 @@ const db = require('../data/db-config');
 module.exports = {
     get,
     getById,
+    getByFilter,
     insert,
     update,
     remove
@@ -18,6 +19,12 @@ function getById(loot_id) {
         .select('loot_id', 'name', 'value', 'claimed', 'bagged', 'sold')
         .first();
     
+}
+
+function getByFilter(filter) {
+    return db('loot')
+        .where({filter})
+        .select('loot_id', 'name', 'value')
 }
 
 async function insert(loot){

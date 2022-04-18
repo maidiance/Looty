@@ -4,7 +4,9 @@ module.exports = {
     find,
     findById,
     findBy,
-    insert
+    insert,
+    update,
+    remove
 };
 
 function find() {
@@ -22,5 +24,19 @@ function findBy(filter) {
 async function insert(user) {
     await db('users').insert(user);
     let [result] = await findBy({username: user.username});
+    return result;
+}
+
+async function update(user_id, changes) {
+    await db('users')
+        .where('user_id', user_id)
+        .update(changes);
+    let result = await findById(user_id);
+    return result;
+}
+
+async function remove(user_id) {
+    let result = await findById(user_id);
+    await db('users').where('user_id', user_id).del();
     return result;
 }

@@ -67,6 +67,16 @@ describe('test Loot model', () => {
         expect(result.sold).toBe(0);
     });
 
+    test('can get undistributed loot', async() => {
+        await db('loot').insert({name: 'teddy bear', value: 0});
+        await db('loot').insert({name: 'claimed', value: 0, claimed: true});
+        await db('loot').insert({name: 'bagged', value: 0, bagged: true});
+        await db('loot').insert({name: 'sold', value: 0, sold: true});
+        let result = await Loot.getByFilter({claimed: false, bagged: false, sold: false});
+        expect(result.length).toBe(1);
+        expect(result[0].name).toBe('teddy bear');
+    })
+
     test('can insert loot', async() => {
         let result = await Loot.insert({name: 'longsword +1', value: 1000});
         expect(result.loot_id).toBe(1);
