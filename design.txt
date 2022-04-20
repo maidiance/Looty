@@ -1,0 +1,93 @@
+Looty design doc
+Critical Functions:
+Add loot to the register
+Retrieve loot list with sorting and filtering
+player elections
+conflict resolution
+Report what players got what items after resolution.
+Manual loot distribution intervention
+
+Additional functions:
+campaign segregation
+logon and security
+User management
+
+--------------------
+
+Add loot to the register:  Loot needs to be added by a DM.
+
+Web-Server:
+In the initial release, this DM page will be protected by a simple HTTP authentication since it's just going to be me and Mai.  The address will be Looty.com/gm
+
+Client:
+The add loot page design is not yet decided.  Value entry will be in gold pieces and converted to copper piece values in code.
+Sending loot loot to the database will be a POST request against /API/loot.  The data sent will be a serialized JSON file.  The JSON file will be an array of JSON key-value pairs.  The keys will be Name, Count, and Value.  Value must be in copper pieces.  The LSON file must also contain a single key of coins, wihch is the number of copper pieces that the DM is adding to the unclaimed loot.  This number can be zero.
+FUTURE: Campaign field so you can add loot to a particular campaign.
+
+App-Server:
+There will be an endpoint called POST /API/loot.  This API will accept an array of key-value pairs.  Keys are Name, Count, and Value representing the loot the DM wishes to add to the register.  There will also be a coin key who's value is the number of copper peices to add to the pot.
+The app server add this loot to the database.  It will use a loop to add each item as an individual to the table.  Therefore if there are two longswords, there will be two rows added to the table.
+Value is in copper pieces.  
+There is another table called coffer with a single coin value stored.  This is the total number of unclaimed coins.
+The SQL statement will be constructed by sting concatenation and all adds will be accomplished with a single DB call.
+SQL: insert into loot_register (name,value) values (item1_name, item1_value)
+Coins are added to the coffer thusly: update coffer where coin = coin + $coins added
+
+----------------------
+
+Retrieve loot list: Pull loot based on requirements.
+Client: 
+Be ready to receive and display a huge table of information.  Any request to get a list of loot will be made against GET /API/loot.  This endpoint will allow several URL fields to support sorting, filtering, and grouping.  Initial release will be sorting  and basic filtering only.  Requests against the endpoint without fields will result in the full loot list returned in the order it was added.  It will also return the number of unclaimed coins.
+The field 'sort' will let you specify a column to sort the list by.  Sort=name will cause a table to be returned sorted by the name of the loot.  Possible sort values are name, value, claimed_by.
+The field "filter" will return a table with items that match the filter.  Possible values as sold, claimed, bagged and their reverse.  Unsold, unclaimed, unbagged.
+For example, the request "GET /API/loot?sort=value$filter=unclaimed" will get you a list of unclaimed loot sorted by value.
+FUTURE: When specifying a filter of 'claimed' and optional field of character will be available to filter to loot claimed by a particular character.  The API will expect a number indicating the database id of the character.
+FUTURE: There will be a campaign field where you can specify that you only want loot for a particular campaign.
+
+App-Server:
+The endpoint for loot retrieval will be GET /API/loot.  This URL will have the fiends of filter and sort.
+The filter field will be handled by first checking if it exists.  If it does, check it against the list of possible values: sold, claimed, bagged, Unsold, unclaimed, unbagged.
+FUTURE: if the filter is claimed, check for a character field to return loot claimed by a character.  If no such field exists, return all claimed loot.
+The sort field will be handled by first checking if it exists.  If it does, check it against the list of possible values: name, value, claimed_by.  Name and value are trivial to add to the SQL statement.  claimed_by is trickier because if implemented naively, it'll return by character id number, not name.  We will first need to resolve the IDs into Names, then filter by that.
+SQL: select * fromn loot_register
+Check if there is a filter.  If there is, concantinate an appropriate WHERE clause.  (where claimed_by is null)
+Check if there is a sort.  If there is, concantinate an appropriate ORDER BY clause. (order by name)
+Add the ;.
+ALso return the value of all unclaimed coins.  Do this in call cases.
+
+-------------------
+
+Player Elections: Players want to select loot.
+
+Overview: Player elections will be an ordered list of desired items in the order that they are desired.  Players will see a list of unclaimed loot on the left of the screen.  They will drag desired loot into a list on the right side of the screen that can be reordered as desired.  Players will place items critical to their character's development at the top of the list, with items that are nice to have being closer to the bottom.  If a player doesn't particularly need an item, they can leave it in the left-hand list to indicate they don't have a claim on it and would prefer to sell it.  These selections have obvious conflicts with eachother, but this is discussed later.  This section is purely about the process of players making elections, then storing those elections in the database.  Once all elections are made, the app server will resolve conflicts.  The elections table is temporary and will only store the elections for the election currently in progress.  Once the loot is divyed up, the elections table will be truncated. Any post-election reconciliation will need to be handled manually.  There is also the concept of a "party bag" where items can be elected to be own jointly in a shared inventory.  This is so unique or niche items with party-wide utility, such as chimes of opening or an immovable rod, can be saved, but don't need to be claimed by one person individually as they would be taking on the monetary burden for items that are universally useful.  The Bag vote is handled before items are dispersed, so players can vote to bag something while also trying to claim it, this means that if the item ends up not getting bagged, then the player who tried to claim it might be able to own it outright.
+
+Client:
+First get a list of unclaimed loot and show it to the player.  Name and Value.  There should also be another list that the player can drag loot into to claim it.  The list should be able to be reordered.  Items at the top of the list are the most desireable.  
+Keep a running total of every item the player is trying to claim next to the items being claimed so they have some idea of where on their list they're going tyo run out of money.  But since every player isn't going to get every item they ask for there should be no limits on how much they can try to claim.  You will get the total available coins when you pull the loot list.  Divive this by the number of players in the campaign. 
+Every item should also have a checkbox where a player can vote to bag an item.
+When a player completes their elections, these elections will be arrainged in a serialized JSON array of JSON key-value pairs that include item id, character id, rank, and boolean bag vote.  This will be sent to POST /api/elections
+
+App-Server:
+Create an endpoint for POST /api/elections.  The retrieved data will be a JSON array of JSON key-value pairs contained item-id, player-id, rank, and bag boolean.  Each array item is one player making one elections for one item.  These elctions will be added to the database as is, there is no processes that needs to be done.
+SQL: insert into election (character-id, item-id, rank, bag) values 
+Then concantinate each elections made and send them to the DB as a single transation.
+Then pull the elections table with SELECT COUNT (DISTINCT character-id) from elections to gut a count of how many players have made their elections.  If all players have made elections, move on to conflict resolution.
+
+-----------------
+
+Election conflict resolution
+
+Overview: Conflict resolution is the meat of looty.  Multiple players may try to put the same item at the same rank, so only one of them can get it. Or even more complicated, there are several copies of the same item and everyone wants one.  This will be common with potions and other consumables.  The issues comes about with how looty handles each item individually.  If there are 5 potions, then there are five items.  If every happens to rank the same item IDs in the same order, then the potions will be distributed effectively randomly.  As each election rank is processed, it will be a random roll.  Conflict resolution will happen entirely on the app server.  If the same item is ranked the same by multiple players, the conflict will be resolved by random selection.  Every time a playher gains an item, that items value will be added to their score.  In future conflicts, the player with the lowest score, the one who won the fewest elections, will win.  If multiple players are tied for lowest score, then random selection will be used.  No matter how a item ends up in a player's bag, their score will increase by that amount.  Their score is only considered in the case of conflict.  If a player can not afford an item, it will not be granted to them and they will not be considered for random resolution.  
+
+App-Server:
+After the server has determined that all elections have been made, we go into conflict resolution.  Our first step is to gather the required data.  Create an object for every player indexed by their player id.  This object will hold their current score and the total amount of gold they're allowed to claim.  There needs to be a global variable that will contain the total value of loot someone will be able to claim, but we don't know how much that is yet.  The first thing we need to know is the total election value.  Run a select sum against the loot register for all unclaimed loot, then add the coin value in coffer.  Run select distinct against player ids to get each player id and the total number of players.  Divide the two without remainder to get the total value that each player is allowed to claim.
+
+Now we start the loop. Pull a list of everyone's first desire.  
+	If the same item id shows up more than once, compare the scores of everyone involved.  Lowest score wins.  Random selection for a tiebreaker.
+	Add everyone's items to the distrobution table and increase thier score.
+	Delete every election from the election database for each item id that was granted.
+	Get the next desire and rerun. 
+	
+
+
+

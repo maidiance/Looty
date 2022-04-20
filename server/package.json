@@ -1,0 +1,25 @@
+{
+  "name": "lootyapi",
+  "version": "0.0.0",
+  "description": "REST backend for looty ",
+  "main": "index.js",
+  "scripts": {
+    "test": "true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maidiance/Looty.git%20.git"
+  },
+  "author": "Bo and Mai",
+  "license": "NONE",
+  "bugs": {
+    "url": "https://github.com/maidiance/Looty.git%20/issues"
+  },
+  "homepage": "https://github.com/maidiance/Looty.git%20#readme",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "mysql": "^2.18.1"
+  }
+}
