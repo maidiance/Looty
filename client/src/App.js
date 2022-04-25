@@ -7,6 +7,7 @@ import theme from './styles/theme';
 import NavBar from './components/NavBar';
 import LootDisplay from './components/LootDisplay';
 import AddLoot from './components/AddLoot';
+import Login from './components/Login';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
         <NavBar />
         <Routes>
           <Route exact path='/' />
+          <Route path='/register' element={<Login/>} />
+          <Route path='/login' element={<Login/>} />
           <Route path='/loot' element={<LootDisplay />} />
           <Route path='/addLoot' element={<AddLoot />} />
         </Routes>

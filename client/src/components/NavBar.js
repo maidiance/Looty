@@ -15,6 +15,7 @@ const NavBar = () => {
             </div>
             <div className='center navBar'>
                 <button className='navButton' onClick={()=>handleClick('index')}>Home</button>
+                <button className='navButton' onClick={()=>handleClick('login')}>Login</button>
                 <button className='navButton' onClick={()=>handleClick('addLoot')}>Add Loot</button>
                 <button className='navButton' onClick={()=>handleClick('loot')}>See Register</button>
             </div>
