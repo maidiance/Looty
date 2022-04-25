@@ -11,7 +11,7 @@ const Register = () => {
     const navigate = useNavigate();
     const handleSubmit = e => {
         e.preventDefault();
-        axios.post('http://localhost8080/api/users/register', creds)
+        axios.post('http://localhost:8080/api/users/register', creds)
             .then(resp => {
                 navigate('/login');
             })
