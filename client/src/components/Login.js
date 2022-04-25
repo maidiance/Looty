@@ -26,6 +26,7 @@ const Login = () => {
         axios.post('http://localhost:8080/api/users/login', user)
             .then(resp => {
                 setError('');
+                console.log(resp);
                 localStorage.setItem('token', resp.data.token);
                 navigate('/');
             })
