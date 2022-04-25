@@ -5,7 +5,7 @@ const Users = require('./user-model');
 const { validateUser, validateUsername, usernameUnique, validateUserId } = require('./user-middleware');
 const { restricted, only} = require('../middleware/restricted');
 const { JWT_SECRET } = require('../secrets');
-  
+
 router.post('/register', validateUser, usernameUnique, async (req, res) => {
     const user = req.body;
     const hash = bcrypt.hashSync(user.password, 8);
