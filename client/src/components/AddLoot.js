@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import StyledDiv from '../styles/AddLootStyle';
-import axios from 'axios';
+import axiosWithAuth from '../utils/axiosWithAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AddLoot = () => {
@@ -30,7 +30,7 @@ const AddLoot = () => {
             coin: 0
         }
         // API call
-        axios.post('http://localhost:8080/api/loot', loot)
+        axiosWithAuth().post('/loot', loot)
             .then(resp => {
                 console.log(resp);
             })

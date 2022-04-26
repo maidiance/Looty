@@ -18,7 +18,6 @@ function restricted (req, res, next) {
 }
 
 const only = role_name => (req, res, next) => {
-    console.log(req.decodedJwt);
     if(role_name != req.decodedJwt.role) {
         res.status(403).json({message: 'restricted endpoint'});
     } else {
