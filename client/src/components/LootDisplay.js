@@ -1,43 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import styled from "styled-components";
+import StyledDiv from '../styles/LootDisplayStyle';
 
 import Loot from "./Loot";
-
-const StyledDiv = styled.div`
-  .columnName {
-    font-weight: bold;
-  }
-  .columnLabel {
-    background-color: ${props=> props.theme.coffee};
-    color: #f8f4f2;
-    border-bottom: 1px solid black;
-  }
-  table {
-    width: 95%;
-    margin: 0 auto;
-  }
-  tr {
-    text-align: left;
-    background-color: ${props=> props.theme.offWhite};
-  }
-  tr:nth-child(even) {
-    background-color: ${props=> props.theme.latte};
-  }
-  tr:hover:not(.columnLabel) {
-    background-color: ${props=> props.theme.toast};
-  }
-  td {
-    padding-left: 5px;
-    text-align: left;
-  }
-`;
 
 const LootDisplay = () => {
   const [loot, setLoot] = useState([]);
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/loot")
+      .get("http://localhost:8080/api/loot?undistributed=true")
       .then((resp) => {
         setLoot(resp.data);
       })
