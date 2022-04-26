@@ -3,13 +3,13 @@ const Users = require('./user-model');
 async function validateUser (req, res, next) {
     const { username, password, role } = req.body;
     if(!username || !username.trim()) {
-        return res.status(400).json({message: 'username required'});
+        res.status(400).json({message: 'username required'});
     } else if (username.length >= 128) {
-        return res.status(400).json({message: 'username too long'});
+        res.status(400).json({message: 'username too long'});
     } else if (!password || !password.trim()) {
-        return res.status(400).json({message: 'password required'});
+        res.status(400).json({message: 'password required'});
     } else if ((role && role.trim()) && (role != 'admin' && role != 'dm')) {
-        return res.status(400).json({message: 'invalid role'});
+        res.status(400).json({message: 'invalid role'});
     } else {
         next();
     }
@@ -29,8 +29,8 @@ async function usernameUnique (req, res, next) {
 async function validateUsername (req, res, next) {
     const username = req.body.username;
     const user = await Users.findBy({username});
-    if(user == null || user.length < 1 || username.length >= 128) {
-        return res.status(401).json({message: 'invalid user'});
+    if((user == null || user.length < 1) || username.length >= 128) {
+        res.status(401).json({message: 'invalid user'});
     } else {
         req.user = user;
         next();

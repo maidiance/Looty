@@ -21,10 +21,10 @@ router.post('/login', validateUser, validateUsername, (req, res) => {
         const token = generateToken(user);
         res.status(200).json({
             message: `welcome ${user.username}`,
-            data: token
+            token
         });
     } else {
-        res.json(401).json({message: 'invalid credentials'});
+        res.status(401).json({message: 'invalid credentials'});
     }
 });
 
