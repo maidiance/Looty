@@ -24,19 +24,24 @@ const AddLoot = () => {
     const handleLoot = () => {
         // kill empty loot
         formList.pop();
-        // copy into proper/expected format
-        const loot = {
-            loot: formList,
-            coin: 0
-        }
+        // convert value to integer
+        const loot = formList.map((item) => {
+            return({
+                name: item.name,
+                value: parseInt(item.value)
+            })
+        });
         // API call
-        axiosWithAuth().post('/loot', loot)
-            .then(resp => {
-                console.log(resp);
-            })
-            .catch(err => {
-                console.error(err);
-            })
+        for(let i = 0; i < loot.length; i++){
+            axiosWithAuth().post('/loot', loot[i])
+                .then(resp => {
+                    //success!
+                    console.log(resp);
+                })
+                .catch(err => {
+                    console.error(err);
+                })
+        }
         navigate('/loot');
     }
 
