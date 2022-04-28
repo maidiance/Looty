@@ -17,7 +17,6 @@ function validateLootId (req, res, next) {
 
 function validateLoot (req, res, next) {
     const loot = req.body;
-    console.log('received ' + loot);
     if (!loot.name || !loot.name.trim() || loot.name.length >= 256){
         res.status(400).json({message: 'invalid item name'});
     } else if (!loot.value || typeof(loot.value) != 'number' || loot.value < 0){

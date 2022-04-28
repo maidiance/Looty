@@ -28,7 +28,8 @@ const AddLoot = () => {
         const loot = formList.map((item) => {
             return({
                 name: item.name,
-                value: parseInt(item.value)
+                value: parseInt(item.value),
+                count: item.count
             })
         });
         // API call
