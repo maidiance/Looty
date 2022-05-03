@@ -8,6 +8,7 @@ import * as yup from 'yup';
 const AddLoot = () => {
     const [formList, setFormList] = useState([{name: '', value: 0, count: 1}]);
     const [error, setError] = useState('');
+    const [shownError, setShownError] = useState('');
     const [valid, setValid] = useState(false);
     const navigate = useNavigate();
 
@@ -67,9 +68,13 @@ const AddLoot = () => {
             }
             navigate('/loot');
         } else {
+            // set errors
+            setShownError(error);
             // show errors
             const errorDiv = document.getElementsByClassName('errors')[0];
-            errorDiv.classList.toggle('hidden');
+            if(errorDiv.classList.contains('hidden')){
+                errorDiv.classList.toggle('hidden');
+            }
         }
     }
 
@@ -81,17 +86,14 @@ const AddLoot = () => {
                 <p>🏹 Amount must be higher than 0. <span className='reverse'>🏹</span></p><br />
                 <p>✨ When finished, leave the last row empty and click the button. <span className='reverse'>✨</span></p><br />
             </div>
-            {
-                (error.name || error.value || error.count) && 
-                <>
-                    <div className='errors hidden'>
-                        <h2 id='error'>Please fix errors and try again.</h2>
-                        <p>{error.name}</p>
-                        <p>{error.value}</p>
-                        <p>{error.count}</p>
-                    </div>
-                </>
-            } 
+            <>
+                <div className='errors hidden'>
+                    <h2 id='error'>Please fix errors and try again.</h2>
+                    <p>{shownError.name}</p>
+                    <p>{shownError.value}</p>
+                    <p>{shownError.count}</p>
+                </div>
+            </>
             {
                 formList.map((form, index) => {
                     return(
