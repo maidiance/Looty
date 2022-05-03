@@ -8,7 +8,7 @@ const LootDisplay = () => {
   const [loot, setLoot] = useState([]);
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/loot?undistributed=true")
+      .get("http://localhost:8080/api/loot")
       .then((resp) => {
         setLoot(resp.data);
       })
