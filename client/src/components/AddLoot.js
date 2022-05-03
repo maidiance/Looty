@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StyledDiv from '../styles/AddLootStyle';
 import axiosWithAuth from '../utils/axiosWithAuth';
 import { useNavigate } from 'react-router-dom';
+import schema from '../validation/addLootSchema';
+import * as yup from 'yup';
 
 const AddLoot = () => {
     const [formList, setFormList] = useState([{name: '', value: 0, count: 1}]);
+    const [error, setError] = useState('');
+    const [valid, setValid] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        schema.isValid(formList).then(valid => setValid(valid));
+    }, [formList]);
+
+    const validate = (name, value) => {
+        yup.reach(schema, name)
+        .validate(value)
+        .then(() => setError({...error, [name]: ''}))
+        .catch(err => setError({...error, [name]: err.errors[0]}))
+    }
 
     const handleChange = (e, index) => {
         const { name, value } = e.target;
+        // validate
+        validate(name, value);
+        // copy list
         const list = [...formList];
+        // format list values
         list[index][name] = value;
+        // set list
         setFormList(list);
+        // add extra input rows
         if(index === formList.length - 1){
             handleAdd();
         }
@@ -24,26 +45,32 @@ const AddLoot = () => {
     const handleLoot = () => {
         // kill empty loot
         formList.pop();
-        // convert value to integer
-        const loot = formList.map((item) => {
-            return({
-                name: item.name,
-                value: parseInt(item.value),
-                count: item.count
-            })
-        });
-        // API call
-        for(let i = 0; i < loot.length; i++){
-            axiosWithAuth().post('/loot', loot[i])
-                .then(resp => {
-                    //success!
-                    console.log(resp);
+        if(valid) {
+            // convert value to integer
+            const loot = formList.map((item) => {
+                return({
+                    name: item.name,
+                    value: parseInt(item.value),
+                    count: item.count
                 })
-                .catch(err => {
-                    console.error(err);
-                })
+            });
+            // API call
+            for(let i = 0; i < loot.length; i++){
+                axiosWithAuth().post('/loot', loot[i])
+                    .then(resp => {
+                        //success!
+                        console.log(resp);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    })
+            }
+            navigate('/loot');
+        } else {
+            // show errors
+            const errorDiv = document.getElementsByClassName('errors')[0];
+            errorDiv.classList.toggle('hidden');
         }
-        navigate('/loot');
     }
 
     return (
@@ -54,6 +81,17 @@ const AddLoot = () => {
                 <p>🏹 Amount must be higher than 0. <span className='reverse'>🏹</span></p><br />
                 <p>✨ When finished, leave the last row empty and click the button. <span className='reverse'>✨</span></p><br />
             </div>
+            {
+                (error.name || error.value || error.count) && 
+                <>
+                    <div className='errors hidden'>
+                        <h2 id='error'>Please fix errors and try again.</h2>
+                        <p>{error.name}</p>
+                        <p>{error.value}</p>
+                        <p>{error.count}</p>
+                    </div>
+                </>
+            } 
             {
                 formList.map((form, index) => {
                     return(

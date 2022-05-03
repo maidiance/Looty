@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 const StyledDiv = styled.div`
     background-color: ${props=> props.theme.coffee};
-    h1 {
+    h1, h2 {
         color: ${props => props.theme.toast};
         text-align: center;
     }
@@ -14,6 +14,10 @@ const StyledDiv = styled.div`
         color: ${props=> props.theme.offWhite};
         padding: 5px;
         display: inline;
+    }
+    .errors {
+        text-align: center;
+        margin-bottom: 1%;
     }
     form {
         margin: 0 auto;
@@ -35,10 +39,13 @@ const StyledDiv = styled.div`
     }
     button {
         border-radius: 15px;
-        width: 80%;
+        width: 50%;
         margin: 1% 0;
         padding: 2%;
         background-color: ${props => props.theme.latte};
+    }
+    .hidden {
+        display: none;
     }
 `
 

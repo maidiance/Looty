@@ -36,7 +36,7 @@ const Register = () => {
                         localStorage.setItem('token', resp.data.token);
                     })
                     .catch(() => {
-
+                        //login failed!
                     })
             })
     }
@@ -58,8 +58,8 @@ const Register = () => {
                 <>
                     <h2 id='error'>Error </h2>
                     <div className = 'errors'>
-                        <p>⚠️{error.username}</p>
-                        <p>⚠️{error.password}</p>
+                        <p>{error.username}</p>
+                        <p>{error.password}</p>
                     </div>
                 </>
             } 
