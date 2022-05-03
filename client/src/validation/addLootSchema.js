@@ -16,7 +16,7 @@ const lootSchema = yup.object().shape({
         .number()
         .typeError('⚠️ amount must be a number')
         .integer('⚠️ amount be a whole number')
-        .min(1, '⚠️ amount must be a positive number')
+        .min(1, '⚠️ amount must be at least one')
         .required('⚠️ amount is required')
 });
 
