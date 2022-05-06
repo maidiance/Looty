@@ -6,7 +6,7 @@ const StyledDiv = styled.div`
   }
   .columnLabel {
     background-color: ${props=> props.theme.coffee};
-    color: #f8f4f2;
+    color: ${props => props.theme.offWhite};
     border-bottom: 1px solid black;
   }
   table {
