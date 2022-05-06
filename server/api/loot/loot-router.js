@@ -38,7 +38,10 @@ router.get('/:id', validateLootId, (req, res) => {
 router.post('/', restricted, only('dm'), validateLoot, (req, res) => {
     let loots = [];
     if(req.body.count == 1){
-        loots = req.body;
+        loots = ({
+            name: req.body.name,
+            value: req.body.value
+        });
     } else {
         for(let i = 0; i < req.body.count; i++) {
             loots.push({
@@ -51,7 +54,7 @@ router.post('/', restricted, only('dm'), validateLoot, (req, res) => {
         .then(loot => {
             res.status(201).json(loot);
         })
-        .catch(() => {
+        .catch((err) => {
             res.status(500).json({message: 'could not post loot'});
         })
 
