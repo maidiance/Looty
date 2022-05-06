@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import StyledDiv from '../styles/DistributionStyle';
+import StyledDiv from '../styles/ElectionStyle';
 import LootCard from "./LootCard";
 
-const Distribution = () => {
+const Election = () => {
   const [loot, setLoot] = useState([]);
 
   useEffect(() => {
@@ -114,4 +114,4 @@ const Distribution = () => {
   );
 };
 
-export default Distribution;
+export default Election;
