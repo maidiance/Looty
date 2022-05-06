@@ -24,16 +24,31 @@ const Distribution = () => {
     document.addEventListener('drop', drop);
   }, []);
 
+  /**
+  * Checks if the target is one of the collection boxes
+  * @param {Object} target - The target from the event.
+  * @returns {Object} node - The Collection Box that is targeted or null
+  */
   function checkDropTarget(target) {
-    // returns an element
+    // checking need/greed box
     if(target.children && target.children.length >= 2 && target.children[1].className){
       if(target.children[1].classList.contains('box')){
         return target;
       }
     }
+    // checking header box
     if(target.parentNode.children && target.parentNode.children.length >= 2 && target.parentNode.children[1].className){
       if(target.parentNode.children[1].classList.contains('box')){
         return target.parentNode;
+      }
+    }
+    // checking loot item
+    if(target.parentNode.classList && target.parentNode.classList.contains('lootItem')){
+      var loot = target.parentNode.parentNode.parentNode.parentNode;
+      if(loot.children && loot.children.length >= 2 && loot.children[1].className){
+        if(loot.children[1].classList.contains('box')){
+          return loot;
+        }
       }
     }
     return null;
