@@ -39,7 +39,7 @@ const NavBar = () => {
                     user.username &&
                     <>
                         <button className='navButton' onClick={()=>handleClick('addLoot')}>Add Loot</button>
-                        <button className='navButton' onClick={()=>handleClick('distribution')}>Distribution</button>
+                        <button className='navButton' onClick={()=>handleClick('election')}>Election</button>
                     </>
                 }
             </div>
