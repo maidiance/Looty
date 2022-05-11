@@ -51,6 +51,7 @@ const Election = () => {
         }
       }
     }
+    // didn't find a valid box for target
     return null;
   }
 
@@ -86,8 +87,48 @@ const Election = () => {
     }
   }
 
+  function handleOptions() {
+    const optionDiv = document.getElementById('options');
+    optionDiv.classList.toggle('hidden');
+  }
+
   return (
     <StyledDiv>
+      <div className='gear' onClick={handleOptions}>⚙️</div>
+      <div className='hidden options' id='options'>
+        <div className='valueDisplay'>
+          <input
+            id='sellValue'
+            name='valueDisplay'
+            type='radio'
+            value='sell'
+          />
+          <label for='sellValue'>Sell Value</label>
+          <input
+            id='buyValue'
+            name='valueDisplay'
+            type='radio'
+            value='buy'
+          />
+          <label for='buyValue'>Buy Value</label>
+        </div>
+        <div className='coinDisplay'>
+          <input
+            id='gold'
+            name='coinDisplay'
+            type='radio'
+            value='gold'
+          />
+          <label for='gold'>Gold</label>
+          <input
+            id='copper'
+            name='coinDisplay'
+            type='radio'
+            value='copper'
+          />
+          <label for='copper'>Copper</label>
+        </div>
+      </div>
       <div className='need'>
         <h2>Need</h2>
         <div className='box'></div>
