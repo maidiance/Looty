@@ -8,7 +8,7 @@ import NavBar from './components/NavBar';
 import LootDisplay from './components/LootDisplay';
 import AddLoot from './components/AddLoot';
 import Login from './components/Login';
-import Distribution from './components/Distribution';
+import Election from './components/Election';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
           <Route path='/login' element={<Login/>} />
           <Route path='/loot' element={<LootDisplay />} />
           <Route path='/addLoot' element={<AddLoot />} />
-          <Route path='/distribution' element={<Distribution/>} />
+          <Route path='/election' element={<Election/>} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

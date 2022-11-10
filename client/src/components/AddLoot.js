@@ -13,7 +13,20 @@ const AddLoot = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        schema.isValid(formList).then(valid => setValid(valid));
+        let toVerify = [...formList];
+        for(let item of toVerify) {
+            if(toVerify.length > 1 && item.name.length === 0) {
+                // remove empty items
+                let index = toVerify.indexOf(item);
+                toVerify.splice(index, 1);
+            }
+            else if(item.name && item.name.length >= 3){
+                // item name must be longer than 3
+                setValid(true);
+            } else {
+                setValid(false);
+            }
+        }
     }, [formList]);
 
     const validate = (name, value) => {
@@ -29,9 +42,8 @@ const AddLoot = () => {
         validate(name, value);
         // copy list
         const list = [...formList];
-        // format list values
-        list[index][name] = value;
         // set list
+        list[index][name] = value;
         setFormList(list);
         // add extra input rows
         if(index === formList.length - 1){
@@ -46,24 +58,24 @@ const AddLoot = () => {
     const handleLoot = () => {
         // kill empty loot
         formList.pop();
+        // check for valid input
         if(valid) {
             // convert value to integer
             const loot = formList.map((item) => {
                 return({
                     name: item.name,
                     value: parseInt(item.value),
-                    count: item.count
+                    count: parseInt(item.count)
                 })
             });
             // API call
             for(let i = 0; i < loot.length; i++){
                 axiosWithAuth().post('/loot', loot[i])
                     .then(resp => {
-                        //success!
-                        console.log(resp);
+                        //success
                     })
                     .catch(err => {
-                        console.error(err);
+                        //error
                     })
             }
             navigate('/loot');
@@ -108,15 +120,17 @@ const AddLoot = () => {
                                 /></label>
                                 <label><p>Value</p>
                                 <input
-                                    type='text'
+                                    type='number'
                                     name='value'
+                                    min='0'
                                     value={form.value}
                                     onChange={e => handleChange(e, index)}
                                 /></label>
                                 <label><p>Amount</p>
                                 <input
-                                    type='text'
+                                    type='number'
                                     name='count'
+                                    min='1'
                                     value={form.count}
                                     onChange={e => handleChange(e, index)}
                                 /></label>
