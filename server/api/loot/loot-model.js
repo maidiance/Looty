@@ -16,7 +16,7 @@ function get() {
 function getById(loot_id) {
     return db('loot')
         .where('loot_id', loot_id)
-        .select('loot_id', 'name', 'value', 'claimed', 'bagged', 'sold')
+        .select('loot_id', 'name', 'value')
         .first();
     
 }

@@ -10,8 +10,6 @@ exports.up = function(knex) {
             .references('user_id')
             .inTable('users')
             .onDelete('CASCADE');
-        tbl.boolean('bagged').defaultTo(false);
-        tbl.boolean('sold').defaultTo(false);
     })
 };
 
