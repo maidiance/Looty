@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
     if(req.query && req.query.undistributed){
-        Loots.getByFilter({claimed: null, bagged: false, sold: false})
+        Loots.getByFilter({claimed: 0})
             .then(loot => {
                 res.status(200).json(loot);
             })

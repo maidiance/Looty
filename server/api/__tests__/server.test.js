@@ -62,17 +62,13 @@ describe('test Loot model', () => {
         await db('loot').insert({name: 'longsword +1', value: 1000});
         let result = await Loot.getById(1);
         expect(result.name).toBe('longsword +1');
-        expect(result.claimed).toBe(null);
-        expect(result.bagged).toBe(0);
-        expect(result.sold).toBe(0);
+        expect(result.claimed).toBe(0);
     });
 
     test('can get undistributed loot', async() => {
-        await db('loot').insert({name: 'teddy bear', value: 0});
+        await db('loot').insert({name: 'teddy bear', value: 10});
         await db('loot').insert({name: 'claimed', value: 0, claimed: true});
-        await db('loot').insert({name: 'bagged', value: 0, bagged: true});
-        await db('loot').insert({name: 'sold', value: 0, sold: true});
-        let result = await Loot.getByFilter({claimed: false, bagged: false, sold: false});
+        let result = await Loot.getByFilter({claimed: false});
         expect(result.length).toBe(1);
         expect(result[0].name).toBe('teddy bear');
     })
@@ -81,9 +77,7 @@ describe('test Loot model', () => {
         let result = await Loot.insert({name: 'longsword +1', value: 1000});
         expect(result.loot_id).toBe(1);
         expect(result.name).toBe('longsword +1');
-        expect(result.claimed).toBe(null);
-        expect(result.bagged).toBe(0);
-        expect(result.sold).toBe(0);
+        expect(result.claimed).toBe(0);
     });
 
     test('can update loot', async() => {
@@ -91,15 +85,23 @@ describe('test Loot model', () => {
         let result = await Loot.update(1, {name: 'cloak of resistance +2', value: 4000});
         expect(result.name).toBe('cloak of resistance +2');
         expect(result.loot_id).toBe(1);
+        expect(result.claimed).toBe(0);
+    });
+
+    test('can claim loot', async() => {
+        await db('users').insert({username: 'bandy', password: 'critter', role: 'dm'});
+        await db('loot').insert({name: 'longsword +1', value: 1000});
+        let result = await Loot.update(1, {name: 'cloak of resistance +2', value: 4000, claimed: 1, claim_id: 1});
+        expect(result.name).toBe('cloak of resistance +2');
+        expect(result.loot_id).toBe(1);
+        expect(result.claimed).toBe(1);
     });
 
     test('can delete loot', async() => {
         await db('loot').insert({name: 'longsword +1', value: 1000});
         let result = await Loot.remove(1);
         expect(result.name).toBe('longsword +1');
-        expect(result.claimed).toBe(null);
-        expect(result.bagged).toBe(0);
-        expect(result.sold).toBe(0);
+        expect(result.claimed).toBe(0);
     });
 });
 
@@ -201,7 +203,7 @@ describe('test loot endpoints', () => {
 
         test('responds with undistributed loot as expected', async() => {
             await Loot.insert({name: 'teddy bear', value: 0});
-            await Loot.insert({name: 'bagged', value: 0, bagged: true});
+            await Loot.insert({name: 'claimed', value: 0, claimed: 1});
             let result = await request(server)
                 .get('/api/loot?undistributed=true');
             expect(result.status).toBe(200);
@@ -220,9 +222,7 @@ describe('test loot endpoints', () => {
             let item = result.body;
             expect(item.loot_id).toBe(2);
             expect(item.name).toBe('ring of protection +1');
-            expect(item.claimed).toBe(null);
-            expect(item.bagged).toBe(0);
-            expect(item.sold).toBe(0);
+            expect(item.claimed).toBe(0);
         });
 
         test('responds with correct status and body sad path', async() => {
@@ -252,14 +252,12 @@ describe('test loot endpoints', () => {
             let result = await request(server)
                 .post('/api/loot')
                 .set('Authorization', login.body.token)
-                .send({name: 'longsword +1', value: 1000});
+                .send({name: 'longsword +1', value: 1000, count: 1});
             expect(result.status).toBe(201);
             let loot = result.body;
             expect(loot.loot_id).toBe(1);
             expect(loot.name).toBe('longsword +1');
-            expect(loot.claimed).toBe(null);
-            expect(loot.bagged).toBe(0);
-            expect(loot.sold).toBe(0);
+            expect(loot.claimed).toBe(0);
         });
 
         test('responds with correct status and body sad path', async() => {
@@ -327,6 +325,7 @@ describe('test loot endpoints', () => {
             expect(item.value).toBe(2000);
         });
 
+
         test('responds with correct status and message sad path', async() => {
             await request(server)
                 .post('/api/users/register')
@@ -373,6 +372,42 @@ describe('test loot endpoints', () => {
             expect(result.status).toBe(403);
             expect(result.body.message).toMatch(/restricted endpoint/i);
         });
+
+        test('responds with correct status and message claim loot happy path', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .put('/api/loot/1')
+                .set('Authorization', login.body.token)
+                .send({name: 'ring of protection +1', value: 2000, claimed: 1, claim_id: 1});
+            let item = result.body;
+                expect(item.loot_id).toBe(1);
+                expect(item.name).toBe('ring of protection +1');
+                expect(item.value).toBe(2000);
+                expect(item.claimed).toBe(1);
+                expect(item.claim_id).toBe(1);
+        });
+
+        test('responds with correct status and message claim loot sad path', async() => {
+            await Loot.insert({name: 'longsword +1', value: 1000});
+            await request(server)
+                .post('/api/users/register')
+                .send({username: 'bob', password: 'smith', role: 'dm'});
+            let login = await request(server)
+                .post('/api/users/login')
+                .send({username: 'bob', password: 'smith'});
+            let result = await request(server)
+                .put('/api/loot/1')
+                .set('Authorization', login.body.token)
+                .send({name: 'ring of protection +1', value: 2000, claimed: 1, claim_id: 13});
+            expect(result.status).toBe(404);
+            expect(result.body.message).toMatch(/user 13 not found/i);
+        });
     });
 
     describe('[DELETE] /api/loot/:id', () => {
@@ -398,9 +433,7 @@ describe('test loot endpoints', () => {
             let loot = result.body;
             expect(loot.loot_id).toBe(1);
             expect(loot.name).toBe('longsword +1');
-            expect(loot.claimed).toBe(null);
-            expect(loot.bagged).toBe(0);
-            expect(loot.sold).toBe(0);
+            expect(loot.claimed).toBe(0);
         });
 
         test('responds with correct status and body sad path', async() => {

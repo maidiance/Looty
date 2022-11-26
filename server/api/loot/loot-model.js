@@ -16,7 +16,7 @@ function get() {
 function getById(loot_id) {
     return db('loot')
         .where('loot_id', loot_id)
-        .select('loot_id', 'name', 'value')
+        .select('loot_id', 'name', 'value', 'claimed', 'claim_id')
         .first();
     
 }
@@ -24,12 +24,16 @@ function getById(loot_id) {
 function getByFilter(filter) {
     return db('loot')
         .where(filter)
-        .select('loot_id', 'name', 'value')
+        .select('loot_id', 'name', 'value', 'claimed', 'claim_id')
 }
 
 async function insert(loot){
     const [id] = await db('loot')
-        .insert(loot);
+        .insert({
+            name: loot.name,
+            value: loot.value,
+            claimed: loot.claimed || false
+        });
     return getById(id);
 }
 

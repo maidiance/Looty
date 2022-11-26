@@ -5,7 +5,8 @@ exports.up = function(knex) {
         tbl.increments('loot_id');
         tbl.string('name', 256).notNullable();
         tbl.integer('value', 256).notNullable();
-        tbl.integer('claimed')
+        tbl.boolean('claimed').defaultTo(false).notNullable();
+        tbl.integer('claim_id')
             .unsigned()
             .references('user_id')
             .inTable('users')
