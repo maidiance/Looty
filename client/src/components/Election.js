@@ -103,14 +103,14 @@ const Election = () => {
             type='radio'
             value='sell'
           />
-          <label for='sellValue'>Sell Value</label>
+          <label className='sellValue'>Sell Value</label>
           <input
             id='buyValue'
             name='valueDisplay'
             type='radio'
             value='buy'
           />
-          <label for='buyValue'>Buy Value</label>
+          <label className='buyValue'>Buy Value</label>
         </div>
         <div className='coinDisplay'>
           <input
@@ -119,14 +119,14 @@ const Election = () => {
             type='radio'
             value='gold'
           />
-          <label for='gold'>Gold</label>
+          <label className='gold'>Gold</label>
           <input
             id='copper'
             name='coinDisplay'
             type='radio'
             value='copper'
           />
-          <label for='copper'>Copper</label>
+          <label className='copper'>Copper</label>
         </div>
       </div>
       <div className='need'>

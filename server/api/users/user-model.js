@@ -22,7 +22,14 @@ function findBy(filter) {
 }
 
 async function insert(user) {
-    await db('users').insert(user);
+    let toInsert = {
+        username: user.username,
+        password: user.password
+    };
+    if(user.dm) {
+        toInsert.role = 'dm';
+    }
+    await db('users').insert(toInsert);
     let [result] = await findBy({username: user.username});
     return result;
 }

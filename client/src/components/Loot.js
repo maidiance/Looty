@@ -6,7 +6,6 @@ const Loot = (props) => {
         <tr>
             <td>{item.name}</td>
             <td>{item.value}</td>
-            <td>{item.bagged ? 'bagged' : 'unbagged'}</td>
             <td>{item.claimed_by ? 'claimed' : 'unclaimed'}</td>
         </tr>
     )

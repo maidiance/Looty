@@ -40,13 +40,15 @@ router.post('/', restricted, only('dm'), validateLoot, (req, res) => {
     if(req.body.count == 1){
         loots = ({
             name: req.body.name,
-            value: req.body.value
+            value: req.body.value,
+            claimed: false
         });
     } else {
         for(let i = 0; i < req.body.count; i++) {
             loots.push({
                 name: req.body.name,
-                value: req.body.value
+                value: req.body.value,
+                claimed: false
             })
         }
     }

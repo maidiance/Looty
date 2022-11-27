@@ -29,9 +29,6 @@ const LootDisplay = () => {
               <p className="columnName">Value</p>
             </td>
             <td>
-              <p className="columnName">Bagged</p>
-            </td>
-            <td>
               <p className="columnName">Claimed</p>
             </td>
           </tr>

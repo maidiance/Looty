@@ -7,7 +7,8 @@ import * as yup from 'yup';
 const Register = () => {
     const initialState = {
         username: '',
-        password: ''
+        password: '',
+        dm: false
     };
 
     const [creds, setCreds] = useState(initialState);
@@ -43,11 +44,18 @@ const Register = () => {
 
     const handleChange = e => {
         const {name, value} = e.target;
-        validate(name, value);
-        setCreds({
-            ...creds,
-            [name]: value
-        });
+        if(name == 'dm') {
+            setCreds({
+                ...creds,
+                [name]: e.target.checked
+            });
+        } else {
+            validate(name, value);
+            setCreds({
+                ...creds,
+                [name]: value
+            });
+        }
     }
 
     return (
@@ -62,27 +70,45 @@ const Register = () => {
                         <p>{error.password}</p>
                     </div>
                 </>
-            } 
-            <form className='register' onSubmit={handleSubmit}>
-            <label><p>Username</p>
-                    <input 
-                        type='text'
-                        name='username'
-                        value={creds.username}
-                        onChange={handleChange}
-                        placeholder='Enter Username'
-                    />
-            </label>
-            <label><p>Password</p>
-                    <input 
-                        type='password'
-                        name='password'
-                        value={creds.password}
-                        onChange={handleChange}
-                        placeholder='Enter Password'
-                    />
-            </label>
-            <button disabled={disabled}>Sign Up</button>
+            }
+            <form onSubmit={handleSubmit}>
+                <table className='register'>
+                    <tbody>
+                        <tr>
+                            <td id='textInput'>
+                                <label><p>Username</p>
+                                    <input 
+                                        type='text'
+                                        name='username'
+                                        value={creds.username}
+                                        onChange={handleChange}
+                                        placeholder='Enter Username'
+                                    />
+                                </label>
+                                <label><p>Password</p>
+                                        <input 
+                                            type='password'
+                                            name='password'
+                                            value={creds.password}
+                                            onChange={handleChange}
+                                            placeholder='Enter Password'
+                                        />
+                                </label>
+                                </td>
+                                <td id='checkboxes'>
+                                    <label><p>DM</p>
+                                        <input
+                                            type='checkbox'
+                                            name='dm'
+                                            value={creds.dm}
+                                            onChange={handleChange}
+                                        />
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                </table>
+                <button disabled={disabled}>Sign Up</button>
             </form>
         </>
     )

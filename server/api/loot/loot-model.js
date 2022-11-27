@@ -28,6 +28,7 @@ function getByFilter(filter) {
 }
 
 async function insert(loot){
+    console.log(loot);
     const [id] = await db('loot')
         .insert({
             name: loot.name,

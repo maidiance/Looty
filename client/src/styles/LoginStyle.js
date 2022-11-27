@@ -6,6 +6,9 @@ const StyledDiv = styled.div`
         text-align: center;
         margin-bottom: 1%;
     }
+    h2 {
+        font-size: 1.4rem;
+    }
     p {
         color: ${props => props.theme.latte};
     }
@@ -25,6 +28,15 @@ const StyledDiv = styled.div`
     .errors {
         text-align: center;
         margin-bottom: 1%;
+    }
+    .register {
+        margin: auto;
+    }
+    #textInput {
+        width: 70%;
+    }
+    #checkboxes {
+        width: 30%;
     }
     button {
         display: block;

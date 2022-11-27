@@ -34,7 +34,7 @@ const NavBar = () => {
             }
             <div className='center navBar'>
                 <button className='navButton' onClick={()=>handleClick('login')}>Login</button>
-                <button className='navButton' onClick={()=>handleClick('loot')}>See Register</button>
+                <button className='navButton' onClick={()=>handleClick('loot')}>Loot DB</button>
                 {
                     user.username &&
                     <>

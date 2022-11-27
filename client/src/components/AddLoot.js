@@ -71,10 +71,10 @@ const AddLoot = () => {
             // API call
             for(let i = 0; i < loot.length; i++){
                 axiosWithAuth().post('/loot', loot[i])
-                    .then(resp => {
+                    .then(() => {
                         //success
                     })
-                    .catch(err => {
+                    .catch(() => {
                         //error
                     })
             }
